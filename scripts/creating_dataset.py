@@ -25,8 +25,9 @@ def create_folders(path):
             os.system(f"mkdir {path}{slash}{f}{slash}{class_num}")
 
 
-def create_dataset(download_path=".", train_size=0.9, train_test_images_path="."):
-    od.download("https://www.kaggle.com/competitions/ml-intensive-yandex-academy-spring-2024", data_dir=download_path)
+def create_dataset(flag_to_download=False, download_path=".", train_size=0.9, train_test_images_path="."):
+    if flag_to_download:
+        od.download("https://www.kaggle.com/competitions/ml-intensive-yandex-academy-spring-2024", data_dir=download_path)
     ans = pd.read_csv(f"{download_path}{slash}train_answers.csv")
     train_ix, test_ix = train_test_split(ans, train_size=train_size)
     create_folders(train_test_images_path)
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     args = parser.args.parse_args()
     if args.use_colab:
         os.chdir("/content")
-    create_dataset(args.download_path, args.train_size, args.train_test_images_path)
+    create_dataset(args.download, args.download_path, args.train_size, args.train_test_images_path)
 
 
 
