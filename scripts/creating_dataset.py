@@ -28,11 +28,12 @@ def create_folders(path):
 def create_dataset(flag_to_download=False, download_path=".", train_size=0.9, train_test_images_path="."):
     if flag_to_download:
         od.download("https://www.kaggle.com/competitions/ml-intensive-yandex-academy-spring-2024", data_dir=download_path)
-    ans = pd.read_csv(f"{download_path}{slash}ml-intensive-yandex-academy-spring-2024{slash}train_answers.csv")
+    dirname = "ml-intensive-yandex-academy-spring-2024"
+    ans = pd.read_csv(f"{download_path}{slash}{dirname}{slash}train_answers.csv")
     train_ix, test_ix = train_test_split(ans, train_size=train_size)
     create_folders(train_test_images_path)
-    move_images_to_classes(train_ix, f"{download_path}{slash}train_images", f"{train_test_images_path}{slash}train_data")
-    move_images_to_classes(test_ix, f"{download_path}{slash}train_images", f"{train_test_images_path}{slash}test_data")
+    move_images_to_classes(train_ix, f"{download_path}{slash}{dirname}{slash}train_images", f"{train_test_images_path}{slash}train_data")
+    move_images_to_classes(test_ix, f"{download_path}{slash}{dirname}{slash}train_images", f"{train_test_images_path}{slash}test_data")
 
 
 parser = Parser(desc="Скачивание датасета и разделение изображений на train и test")
