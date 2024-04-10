@@ -88,7 +88,7 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
         plot_graphs_of_education(axs, model_title, train_metrics, test_metrics,
                                  logging_iters_train, logging_iters_valid)
         if save_state:  # сохранение параметров модели
-            save_model_state(model, optimiser, model_title)
+            save_model_state(model, optimiser, model_title, cur_epoch + i)
     TRAIN_FEATURES, VALID_FEATUES = np.array(TRAIN_FEATURES), np.array(VALID_FEATUES)
     for x, label in enumerate(["loss", "accuracy", "fscore"]):
         plot_data(axs[2, x], [range(num_epochs)] * 2, [TRAIN_FEATURES[:, x], VALID_FEATUES[:, x]],
