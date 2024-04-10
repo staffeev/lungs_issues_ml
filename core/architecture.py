@@ -51,7 +51,7 @@ def save_model_state(model, optimiser, model_title, epoch_num):
             'epoch': epoch_num,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimiser.state_dict()
-            }, f"model_states{slash}{model_title}.pt")
+            }, f".{slash}model_states{slash}{model_title}.pt")
 
 
 def load_model_state(model, optimiser, model_title):
