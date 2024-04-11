@@ -22,6 +22,7 @@ class Parser:
 
     def add_training_group(self):
         self.args.add_argument("--model_title", type=str, default="model", help="Название модели")
+        self.args.add_argument("--use_gpu", default=False, action=BooleanOptionalAction, help="Нужно ли использовать GPU при обучении модели")
         self.args.add_argument("model_path", type=str, help="Путь к файлу с моделью")
         self.args.add_argument("--optimiser", choices=[
             'ASGD', 'Adadelta', 'Adagrad', 'Adam', 'AdamW', 'Adamax', 

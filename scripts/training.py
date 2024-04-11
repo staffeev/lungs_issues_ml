@@ -7,13 +7,15 @@ from core.architecture import test_architecture
 from core.custom_dataset import CustomDataset
 from torch import nn
 from torch import optim
+import torch
 
 parser = Parser(desc="Обучение модели")
 parser.add_training_group()
 
 if __name__ == "__main__":
     args = parser.args.parse_args()
-    dataset_data_path = ""
+    if args.use_gpu:
+        torch.set_default_device("cuda")
     img_path = os.path.join("dataset", "data", "train_images")
     dataset_train = CustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
                                   get_train_transofrms())
