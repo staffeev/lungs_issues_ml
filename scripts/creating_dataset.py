@@ -7,7 +7,8 @@ from argument_parser import Parser
 
 def create_dataset(flag_to_download=False, train_size=0.9):
     if flag_to_download:
-        od.download("https://www.kaggle.com/competitions/ml-intensive-yandex-academy-spring-2024", data_dir="dataset")
+        od.download("https://www.kaggle.com/competitions/ml-intensive-yandex-academy-spring-2024")
+    os.rename("ml-intensive-yandex-academy-spring-2024", "dataset")
     dataset_path = os.path.join("dataset", "data")
     ans = pd.read_csv(os.path.join(dataset_path, "train_answers.csv"))
     ans["id"] = ans["id"].apply(lambda x: f"img_{x}.png")
