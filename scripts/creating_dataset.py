@@ -1,39 +1,19 @@
-import os
-import shutil
 import opendatasets as od
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import sys
 from argument_parser import Parser
-from tqdm import tqdm
-
-slash = "/" if sys.platform == "linux" else "\\"
+from constants import slash, dataset_name, dataset_data_path
 
 
-def move_images_to_classes(ixs, cur_path, new_path):
-    ids, targets = ixs["id"].tolist(), ixs["target_feature"].tolist()
-    images = [i for i in os.listdir(cur_path) if int(i.split("_")[1][:-4]) in ids]
-    for c in tqdm(range(len(targets)), desc="Moving images"):
-        image, target = images[c], targets[c]
-        shutil.copyfile(rf"{cur_path}{slash}{image}", rf"{new_path}{slash}{target}{slash}{image}")
-
-
-def create_folders(path):
-    for f in ("train_data", "test_data"):
-        os.system(f"mkdir {path}{slash}{f}")
-        for class_num in (0, 1, 2):
-            os.system(f"mkdir {path}{slash}{f}{slash}{class_num}")
-
-
-def create_dataset(flag_to_download=False, download_path=".", train_size=0.9, train_test_images_path="."):
+def create_dataset(flag_to_download=False, download_path=".", train_size=0.9, train_test_labels_path="."):
     if flag_to_download:
-        od.download("https://www.kaggle.com/competitions/ml-intensive-yandex-academy-spring-2024", data_dir=download_path)
-    dirname = f"ml-intensive-yandex-academy-spring-2024{slash}data"
-    ans = pd.read_csv(f"{download_path}{slash}{dirname}{slash}train_answers.csv")
+        od.download(f"https://www.kaggle.com/competitions/{dataset_name}", data_dir=download_path)
+    dataset_path = f"{download_path}{slash}{dataset_data_path}"
+    ans = pd.read_csv(f"{dataset_path}train_answers.csv")
     train_ix, test_ix = train_test_split(ans, train_size=train_size)
-    create_folders(train_test_images_path)
-    move_images_to_classes(train_ix, f"{download_path}{slash}{dirname}{slash}train_images", f"{train_test_images_path}{slash}train_data")
-    move_images_to_classes(test_ix, f"{download_path}{slash}{dirname}{slash}train_images", f"{train_test_images_path}{slash}test_data")
+    train_ix.to_csv(f"{train_test_labels_path}{slash}train_labels.csv")
+    test_ix.to_csv(f"{train_test_labels_path}{slash}test_labels.csv")
+    return train_test_labels_path
 
 
 parser = Parser(desc="Скачивание датасета и разделение изображений на train и test")
@@ -41,9 +21,7 @@ parser.add_creating_dataset_group()
 
 if __name__ == "__main__":
     args = parser.args.parse_args()
-    if args.use_colab:
-        os.chdir("/content")
-    create_dataset(args.download, args.download_path, args.train_size, args.train_test_images_path)
+    create_dataset(args.download, args.download_path, args.train_size, args.train_test_labels_path)
 
 
 

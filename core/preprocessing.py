@@ -3,6 +3,8 @@ from torchvision.transforms import transforms
 from torchvision import datasets
 
 
+def get_train_transofrms():
+    pass
 
 def preprocessing_train(train_path="train_data"):
     transform_list = transforms.Compose([
