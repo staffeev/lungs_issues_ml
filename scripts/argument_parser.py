@@ -44,6 +44,6 @@ class Parser:
     def add_get_answers_group(self):
         self.args.add_argument("model_path", help="Путь к файлу с моделью")
         self.args.add_argument("--model_title", default="model", help="Название модели, которая будет использована для получения предсказаний для test")
-        self.args.add_argument("--save_path", default=os.path.join("outputs", "movel.csv"), help="Путь, по которому будет сохранен файл с прадсказаниями")
+        self.args.add_argument("--save_path", default=os.path.join("outputs", "model.csv"), help="Путь, по которому будет сохранен файл с прадсказаниями")
 
 
