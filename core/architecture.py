@@ -54,11 +54,12 @@ def save_model_state(model, optimiser, model_title, epoch_num):
             }, f".{slash}model_states{slash}{model_title}.pt")
 
 
-def load_model_state(model, optimiser, model_title):
+def load_model_state(model_title, model, optimiser=None):
     """Загрузка состояния модели"""
     checkpoint = torch.load(f"model_states{slash}{model_title}.pt")
     model.load_state_dict(checkpoint['model_state_dict'])
-    optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
+    if optimiser is not None:
+        optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint["epoch"]
     return epoch
 
@@ -73,7 +74,7 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
     optimiser = optimiser(model.parameters(), lr=1e-3)
     cur_epoch = 0
     if load_state is not None:
-        cur_epoch = load_model_state(model, optimiser, load_state)
+        cur_epoch = load_model_state(load_state, model, optimiser)
     start_time = time.time()
     TRAIN_FEATURES, VALID_FEATUES = [], []
     _, axs = plt.subplots(3, 3, figsize=(15, 10))

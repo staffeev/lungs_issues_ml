@@ -1,4 +1,7 @@
 from argparse import ArgumentParser, BooleanOptionalAction
+import sys
+
+slash = "/" if sys.platform == "linux" else "\\"
 
 
 class Parser:
@@ -11,7 +14,6 @@ class Parser:
         self.args.add_argument("--train_size", type=float, default=0.9, help="Доля изображений, которая попадет в train выборку; остальные попадут в test", required=False)
         self.args.add_argument("--download_path", default=".", help="Путь, по которому находится скачанный датасет", required=False)
         self.args.add_argument("--train_test_images_path", default=".", help="Путь, по которому будут созданы папки для train и test изображений", required=False)
-    
 
     def add_training_group(self):
         self.args.add_argument("--model_title", type=str, default="model", help="Название модели")
@@ -35,4 +37,12 @@ class Parser:
         self.args.add_argument("--load_state", default=None, help="Название модели, чьи сохраненные параметры будут использованы в модели")
         self.args.add_argument("--train_data_path", default="train_data", help="Путь с train изображениям")
         self.args.add_argument("--test_data_path", default="test_data", help="Путь к test изображениям")
+    
+    def add_get_answers_group(self):
+        self.args.add_argument("model_path", help="Путь к файлу с моделью")
+        self.args.add_argument("--model_title", default="model", help="Название модели, которая будет использована для получения предсказаний для test")
+        self.args.add_argument("--images_path", default=f"ml-intensive-yandex-academy-spring-2024{slash}data{slash}test_images", 
+                               help="Путь к папке с изображениями, для которых нужно получить предсказания")
+        self.args.add_argument("--save_path", default="pred.csv", help="Путь, по которому будет сохранен файл с прадсказаниями")
+
 

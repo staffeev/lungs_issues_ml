@@ -3,7 +3,7 @@ import os
 import sys
 sys.path.append("..")
 import importlib.util
-from core.preprocessing import preprocessing_dataset
+from core.preprocessing import preprocessing_test, preprocessing_train
 from core.architecture import test_architecture, load_model_state
 from torch import nn
 from torch import optim
@@ -18,7 +18,8 @@ if __name__ == "__main__":
     args = parser.args.parse_args()
     if args.use_colab:
         os.chdir("/content")
-    dataset_train, dataset_test = preprocessing_dataset(args.train_data_path, args.test_data_path)
+    dataset_train = preprocessing_train(args.train_data_path)
+    dataset_test = preprocessing_test(args.test_data_path)
 
     spec = importlib.util.spec_from_file_location("module", args.model_path)
     module = importlib.util.module_from_spec(spec)
