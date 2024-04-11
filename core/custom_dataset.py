@@ -1,7 +1,7 @@
 import os
 import pandas as pd
+from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.io import read_image
 
 
 class CustomDataset(Dataset):
@@ -11,14 +11,14 @@ class CustomDataset(Dataset):
         self.img_labels = pd.read_csv(annotations_file) if annotations_file is not None else None
 
     def __len__(self):
-        return len(os.listdir(self.img_dir))
+        return len(self.img_labels) if self.img_labels is not None else len(os.listdir(self.img_dir))
 
     def __getitem__(self, idx):
         if self.img_labels is None:
             img_path = os.path.join(self.img_dir, f"img_{idx}.png")
         else:
-            img_path = os.path.join(self.img_dir, f"img_{self.img_labels.iloc[idx][0]}.png")
-        image = read_image(img_path)
+            img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx][0])
+        image = Image.open(img_path).convert("RGB")
         if self.transform:
             image = self.transform(image)
         if self.img_labels is None:

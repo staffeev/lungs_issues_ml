@@ -1,13 +1,11 @@
 from tqdm import tqdm
 import time
+import os
 from sklearn.metrics import accuracy_score, f1_score
 import torch
 from .graph_functions import plot_data, plot_graphs_of_education
 from matplotlib import pyplot as plt
 import numpy as np
-import sys
-
-slash = "/" if sys.platform == "linux" else "\\"
 
 
 def get_accuracy_fscore(output, labels):
@@ -51,12 +49,12 @@ def save_model_state(model, optimiser, model_title, epoch_num):
             'epoch': epoch_num,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimiser.state_dict()
-            }, f".{slash}model_states{slash}{model_title}.pt")
+            }, os.path.join(".model_states", f"{model_title}.pt"))
 
 
 def load_model_state(model_title, model, optimiser=None):
     """Загрузка состояния модели"""
-    checkpoint = torch.load(f"model_states{slash}{model_title}.pt")
+    checkpoint = torch.load(os.path.join("model_states", f"{model_title}.pt"))
     model.load_state_dict(checkpoint['model_state_dict'])
     if optimiser is not None:
         optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -95,5 +93,5 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
         plot_data(axs[2, x], [range(num_epochs)] * 2, [TRAIN_FEATURES[:, x], VALID_FEATUES[:, x]],
                 [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
     if save_graph:
-        plt.savefig(f"graphs{slash}{model_title}.png")
+        plt.savefig(os.path.join("graphs", f"{model_title}.png"))
     return round(time.time() - start_time)
