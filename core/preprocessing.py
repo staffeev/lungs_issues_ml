@@ -5,7 +5,7 @@ from torchvision import datasets
 
 def preprocessing_dataset(train_path="train_data", test_path="test_data"):
     transform_list = transforms.Compose([
-        transforms.Resize(28),
+#        transforms.Resize(28),
         transforms.ToTensor(),
         transforms.Grayscale()
     ])
