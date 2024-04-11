@@ -7,6 +7,8 @@ from .graph_functions import plot_data, plot_graphs_of_education
 from matplotlib import pyplot as plt
 import numpy as np
 
+torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 def get_accuracy_fscore(output, labels):
     """Получение метрик модели: accuracy и fscore"""

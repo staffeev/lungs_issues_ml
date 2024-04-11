@@ -2,6 +2,9 @@ import os
 import pandas as pd
 from PIL import Image
 from torch.utils.data import Dataset
+import torch
+
+torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class CustomDataset(Dataset):

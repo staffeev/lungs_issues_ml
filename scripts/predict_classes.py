@@ -9,6 +9,8 @@ from core.custom_dataset import CustomDataset
 import csv
 from tqdm import tqdm
 
+torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 def get_predicts(dataset, model):
     data = torch.utils.data.DataLoader(dataset, shuffle=False)

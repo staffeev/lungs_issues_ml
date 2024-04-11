@@ -9,6 +9,8 @@ from torch import nn
 from torch import optim
 import torch
 
+torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
+
 parser = Parser(desc="Обучение модели")
 parser.add_training_group()
 
