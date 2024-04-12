@@ -1,18 +1,21 @@
 from tqdm import tqdm
 import time
+import os
 from sklearn.metrics import accuracy_score, f1_score
 import torch
 from .graph_functions import plot_data, plot_graphs_of_education
 from matplotlib import pyplot as plt
 import numpy as np
-import sys
 
-slash = "/" if sys.platform == "linux" else "\\"
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+# torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def get_accuracy_fscore(output, labels):
     """Получение метрик модели: accuracy и fscore"""
-    pred = output.max(1)[1]
+    pred = output.argmax(1)
     return accuracy_score(labels, pred), f1_score(labels, pred, average="macro")
 
 
@@ -29,6 +32,7 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
     for x, y in tqdm(data, desc=log_desc):
         if len(y) != batch_size:
             continue
+        x, y = x.to(device), y.to(device)
         if optimiser is not None:
             optimiser.zero_grad()
         y_pred = model(x)
@@ -37,7 +41,7 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
             loss.backward()
             optimiser.step()
         ix += 1
-        cur_loss, cur_acc, cur_fscore = loss.item(), *get_accuracy_fscore(y_pred, y)
+        cur_loss, cur_acc, cur_fscore = loss.item(), *get_accuracy_fscore(y_pred.cpu(), y.cpu())
         yield ix + len(data) * epoch_num, cur_loss, cur_acc, cur_fscore
         total_loss += cur_loss
         total_acc += cur_acc
@@ -51,14 +55,15 @@ def save_model_state(model, optimiser, model_title, epoch_num):
             'epoch': epoch_num,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimiser.state_dict()
-            }, f".{slash}model_states{slash}{model_title}.pt")
+            }, os.path.join("model_states", f"{model_title}.pt"))
 
 
-def load_model_state(model, optimiser, model_title):
+def load_model_state(model_title, model, optimiser=None):
     """Загрузка состояния модели"""
-    checkpoint = torch.load(f"model_states{slash}{model_title}.pt")
+    checkpoint = torch.load(os.path.join("model_states", f"{model_title}.pt"))
     model.load_state_dict(checkpoint['model_state_dict'])
-    optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
+    if optimiser is not None:
+        optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint["epoch"]
     return epoch
 
@@ -68,12 +73,15 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
                       logging_iters_valid=3, model_title="Model", save_graph=True, 
                       save_state=False, load_state=None):
     """Тест архитектуры: данные + модель + оптимизатор + функция потерь"""
-    data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True)
-    data_test = torch.utils.data.DataLoader(dataset_test, batch_size=batch_size, shuffle=False)
+    model = model.to(device)
+    data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True,
+                                             generator=torch.Generator(device))
+    data_test = torch.utils.data.DataLoader(dataset_test, batch_size=batch_size, shuffle=False,
+                                            generator=torch.Generator(device))
     optimiser = optimiser(model.parameters(), lr=1e-3)
     cur_epoch = 0
     if load_state is not None:
-        cur_epoch = load_model_state(model, optimiser, load_state)
+        cur_epoch = load_model_state(load_state, model, optimiser)
     start_time = time.time()
     TRAIN_FEATURES, VALID_FEATUES = [], []
     _, axs = plt.subplots(3, 3, figsize=(15, 10))
@@ -94,5 +102,5 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
         plot_data(axs[2, x], [range(num_epochs)] * 2, [TRAIN_FEATURES[:, x], VALID_FEATUES[:, x]],
                 [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
     if save_graph:
-        plt.savefig(f"graphs{slash}{model_title}.png")
+        plt.savefig(os.path.join("graphs", f"{model_title}.png"))
     return round(time.time() - start_time)

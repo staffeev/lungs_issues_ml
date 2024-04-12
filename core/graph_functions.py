@@ -1,5 +1,8 @@
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt 
+import torch
+
+torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def plot_data_per_epoch(fig, x, y, title="Model", log_iters=10, **kwargs):

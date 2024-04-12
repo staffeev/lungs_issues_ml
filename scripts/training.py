@@ -1,32 +1,29 @@
-from .argument_parser import Parser
-import os
+from .argument_parser import Parser, get_class_from_file
 import sys
 sys.path.append("..")
-import importlib.util
-from core.preprocessing import preprocessing_dataset
-from core.architecture import test_architecture, load_model_state
+import os
+from core.preprocessing import get_train_transofrms, get_test_transforms
+from core.architecture import test_architecture
+from core.custom_dataset import CustomDataset
 from torch import nn
 from torch import optim
+import torch
 
-
+torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 parser = Parser(desc="Обучение модели")
 parser.add_training_group()
 
-
 if __name__ == "__main__":
     args = parser.args.parse_args()
-    if args.use_colab:
-        os.chdir("/content")
-    dataset_train, dataset_test = preprocessing_dataset(args.train_data_path, args.test_data_path)
-
-    spec = importlib.util.spec_from_file_location("module", args.model_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    model_classname = [i for i in dir(module) if not i.startswith("_")][0]
-
+    if args.use_gpu:
+        torch.set_default_device("cuda")
+    img_path = os.path.join("dataset", "data", "train_images")
+    dataset_train = CustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
+                                  get_train_transofrms())
+    dataset_test = CustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), get_test_transforms())
     test_architecture(
-        dataset_train, dataset_test, eval(f"module.{model_classname}()"), eval(f"optim.{args.optimiser}"),
+        dataset_train, dataset_test, get_class_from_file(args.model_path)(), eval(f"optim.{args.optimiser}"),
         eval(f"nn.{args.loss_func}()"), args.num_epochs, args.batch_size, args.logging_iters_train,
         args.logging_iters_valid, args.model_title, args.save_graph, args.save_state, args.load_state
     )
