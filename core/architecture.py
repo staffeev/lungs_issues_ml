@@ -15,7 +15,7 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 
 def get_accuracy_fscore(output, labels):
     """Получение метрик модели: accuracy и fscore"""
-    pred = output.max(1)[1]
+    pred = output.argmax(1)
     return accuracy_score(labels, pred), f1_score(labels, pred, average="macro")
 
 
@@ -31,6 +31,7 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
     total_fscore = 0
     for x, y in tqdm(data, desc=log_desc):
         if len(y) != batch_size:
+            x, y = x.to(device), y.to(device)
             continue
         if optimiser is not None:
             optimiser.zero_grad()
@@ -40,7 +41,7 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
             loss.backward()
             optimiser.step()
         ix += 1
-        cur_loss, cur_acc, cur_fscore = loss.item(), *get_accuracy_fscore(y_pred, y)
+        cur_loss, cur_acc, cur_fscore = loss.item(), *get_accuracy_fscore(y_pred.cpu(), y.cpu())
         yield ix + len(data) * epoch_num, cur_loss, cur_acc, cur_fscore
         total_loss += cur_loss
         total_acc += cur_acc
@@ -73,8 +74,10 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
                       save_state=False, load_state=None):
     """Тест архитектуры: данные + модель + оптимизатор + функция потерь"""
     model = model.to(device)
-    data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True).to(device)
-    data_test = torch.utils.data.DataLoader(dataset_test, batch_size=batch_size, shuffle=False).to(device)
+    data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True,
+                                             generator=torch.Generator(device))
+    data_test = torch.utils.data.DataLoader(dataset_test, batch_size=batch_size, shuffle=False,
+                                            generator=torch.Generator(device))
     optimiser = optimiser(model.parameters(), lr=1e-3)
     cur_epoch = 0
     if load_state is not None:

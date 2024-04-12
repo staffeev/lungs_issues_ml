@@ -6,7 +6,6 @@ torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def get_train_transofrms():
     return transforms.Compose([
-        transforms.Resize(28),
         transforms.ToTensor(),
         transforms.Grayscale()
     ])
@@ -14,7 +13,6 @@ def get_train_transofrms():
 
 def get_test_transforms():
     return transforms.Compose([
-        transforms.Resize(28),
         transforms.ToTensor(),
         transforms.Grayscale()
     ])
