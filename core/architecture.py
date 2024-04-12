@@ -7,7 +7,10 @@ from .graph_functions import plot_data, plot_graphs_of_education
 from matplotlib import pyplot as plt
 import numpy as np
 
-torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+# torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def get_accuracy_fscore(output, labels):
@@ -69,8 +72,9 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
                       logging_iters_valid=3, model_title="Model", save_graph=True, 
                       save_state=False, load_state=None):
     """Тест архитектуры: данные + модель + оптимизатор + функция потерь"""
-    data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True)
-    data_test = torch.utils.data.DataLoader(dataset_test, batch_size=batch_size, shuffle=False)
+    model = model.to(device)
+    data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True).to(device)
+    data_test = torch.utils.data.DataLoader(dataset_test, batch_size=batch_size, shuffle=False).to(device)
     optimiser = optimiser(model.parameters(), lr=1e-3)
     cur_epoch = 0
     if load_state is not None:
