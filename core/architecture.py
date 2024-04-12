@@ -31,8 +31,8 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
     total_fscore = 0
     for x, y in tqdm(data, desc=log_desc):
         if len(y) != batch_size:
-            x, y = x.to(device), y.to(device)
             continue
+        x, y = x.to(device), y.to(device)
         if optimiser is not None:
             optimiser.zero_grad()
         y_pred = model(x)
