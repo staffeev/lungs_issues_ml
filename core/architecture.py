@@ -92,15 +92,16 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
             data_test, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} valid", model, loss_func))
         TRAIN_FEATURES.append(train_epoch_metrics)
         VALID_FEATUES.append(test_epoch_metrics)
-        # графики обучения
-        plot_graphs_of_education(axs, model_title, train_metrics, test_metrics,
-                                 logging_iters_train, logging_iters_valid)
         if save_state:  # сохранение параметров модели
             save_model_state(model, optimiser, model_title, cur_epoch + i)
-    TRAIN_FEATURES, VALID_FEATUES = np.array(TRAIN_FEATURES), np.array(VALID_FEATUES)
-    for x, label in enumerate(["loss", "accuracy", "fscore"]):
-        plot_data(axs[2, x], [range(num_epochs)] * 2, [TRAIN_FEATURES[:, x], VALID_FEATUES[:, x]],
-                [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
-    if save_graph:
+        # графики обучения
+        if not save_graph:
+            continue
+        plot_graphs_of_education(axs, model_title, train_metrics, test_metrics,
+                                 logging_iters_train, logging_iters_valid)
+        for x, label in enumerate(["loss", "accuracy", "fscore"]):
+            plot_data(axs[2, x], [range(cur_epoch + i + 1)] * 2, [np.array(TRAIN_FEATURES)[:, x], np.array(VALID_FEATUES)[:, x]],
+                    [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
         plt.savefig(os.path.join("graphs", f"{model_title}.png"))
-    return round(time.time() - start_time)
+
+    print(f"Training time: {round(time.time() - start_time)} seconds")
