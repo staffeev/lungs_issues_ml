@@ -8,7 +8,7 @@ def get_class_from_file(path):
     spec = importlib.util.spec_from_file_location("module", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    model_classname = [i for i in dir(module) if not i.startswith("_")][0]
+    model_classname = [i for i in dir(module) if not i.startswith("_") and i[0].isupper()][0]
     return eval(f"module.{model_classname}")
 
 
