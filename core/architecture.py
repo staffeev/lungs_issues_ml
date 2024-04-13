@@ -84,7 +84,6 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
         cur_epoch = load_model_state(load_state, model, optimiser)
     start_time = time.time()
     TRAIN_FEATURES, VALID_FEATUES = [], []
-    _, axs = plt.subplots(3, 3, figsize=(15, 10))
     for i in range(num_epochs):
         *train_metrics, train_epoch_metrics = list(go_for_epoch(
             data_train, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} train", model, loss_func, optimiser))
@@ -97,6 +96,7 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
         # графики обучения
         if not save_graph:
             continue
+        _, axs = plt.subplots(3, 3, figsize=(15, 10))
         plot_graphs_of_education(axs, model_title, train_metrics, test_metrics,
                                  logging_iters_train, logging_iters_valid)
         for x, label in enumerate(["loss", "accuracy", "fscore"]):
