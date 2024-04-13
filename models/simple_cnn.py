@@ -39,7 +39,7 @@ class CNN(nn.Module):
             nn.Linear(128, 32),
             nn.ReLU(),
             nn.Dropout(0.5),
-            nn.Linear(32, 2),
+            nn.Linear(32, 3),
         )
     
     def forward(self, x):

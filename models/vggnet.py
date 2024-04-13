@@ -27,7 +27,7 @@ class VGGNet(nn.Module):
             nn.Linear(256 * 32 * 32, 512),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(512, 2),
+            nn.Linear(512, 3),
         )
         
     def forward(self, x):

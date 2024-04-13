@@ -21,6 +21,7 @@ class PatientCustomDataset(Dataset):
                 self.img_labels['target_feature'][self.img_labels['target_feature'] != 0] = 1
             else: # оставить только больных и искать корону. (1, 2)
                 self.img_labels.drop(self.img_labels[self.img_labels['target_feature'] == 0].index, inplace=True)
+                self.img_labels['target_feature'] -= 1
         
 
     def __len__(self):

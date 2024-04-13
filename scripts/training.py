@@ -3,7 +3,7 @@ import sys
 sys.path.append("..")
 import os
 from core.preprocessing import get_train_transofrms, get_test_transforms
-from core.architecture import test_architecture
+from core.architecture import train_model
 from core.custom_dataset import CustomDataset
 from torch import nn
 from torch import optim
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     dataset_train = CustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
                                   get_train_transofrms())
     dataset_test = CustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), get_test_transforms())
-    test_architecture(
+    train_model(
         dataset_train, dataset_test, get_class_from_file(args.model_path)(), eval(f"optim.{args.optimiser}"),
         eval(f"nn.{args.loss_func}()"), args.num_epochs, args.batch_size, args.logging_iters_train,
         args.logging_iters_valid, args.model_title, args.save_graph, args.save_state, args.load_state,

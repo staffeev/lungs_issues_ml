@@ -4,7 +4,7 @@ from .argument_parser import Parser, get_class_from_file
 import sys
 sys.path.append("..")
 from core.preprocessing import get_train_transofrms, get_test_transforms
-from core.architecture import test_architecture
+from core.architecture import test_binary_architecture
 from core.global_dataset import PatientCustomDataset
 from torch import nn
 from torch import optim
@@ -33,7 +33,7 @@ if __name__ == "__main__":
                                                     get_test_transforms(), False)
     coronavirus_model = get_class_from_file(args.model_path)()
     print(args.optimiser)
-    test_architecture(
+    test_binary_architecture(
         healthy_dataset_train, healthy_dataset_test, healthy_model, eval(f"optim.{args.optimiser}"), eval(f"nn.{args.loss_func}()"), 
         coronavirus_dataset_train, coronavirus_dataset_test, coronavirus_model, eval(f"optim.{args.optimiser}"), eval(f"nn.{args.loss_func}()"), 
 

@@ -110,7 +110,7 @@ def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
 
 
 
-def test_architecture(healthy_dataset_train, healthy_dataset_test, healthy_model, healthy_optimiser, healthy_loss_func,
+def test_binary_architecture(healthy_dataset_train, healthy_dataset_test, healthy_model, healthy_optimiser, healthy_loss_func,
                       coronavirus_dataset_train, coronavirus_dataset_test, coronavirus_model, coronavirus_optimiser, coronavirus_loss_func,
                       num_epochs=3, batch_size=64, logging_iters_train=10,
                       logging_iters_valid=3, model_title="Model", save_graph=True, 
