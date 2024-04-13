@@ -40,7 +40,7 @@ if __name__ == "__main__":
     args = parser.args.parse_args()
     dataset = CustomDataset(os.path.join("dataset", "data", "test_images"), transform=get_test_transforms())
     model = get_class_from_file(args.model_path)().to(device)
-    load_model_state(args.model_title, model)
+    load_model_state(args.weights, model)
     save_predicts(get_predicts(dataset, model), args.save_path)
 
 

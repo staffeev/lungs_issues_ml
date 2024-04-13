@@ -71,7 +71,7 @@ def load_model_state(model_title, model, optimiser=None):
 def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
                       num_epochs=3, batch_size=64, logging_iters_train=10,
                       logging_iters_valid=3, model_title="Model", save_graph=True, 
-                      save_state=False, load_state=None):
+                      save_state=False, load_state=None, period_save_weights=1):
     """Тест архитектуры: данные + модель + оптимизатор + функция потерь"""
     model = model.to(device)
     data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True,
@@ -92,8 +92,8 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
             data_test, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} valid", model, loss_func))
         TRAIN_FEATURES.append(train_epoch_metrics)
         VALID_FEATUES.append(test_epoch_metrics)
-        if save_state:  # сохранение параметров модели
-            save_model_state(model, optimiser, model_title, cur_epoch + i)
+        if save_state and i % period_save_weights:  # сохранение параметров модели
+            save_model_state(model, optimiser, f"{model_title}_{i}", cur_epoch + i)
         # графики обучения
         if not save_graph:
             continue
