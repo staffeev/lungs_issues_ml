@@ -25,5 +25,6 @@ if __name__ == "__main__":
     test_architecture(
         dataset_train, dataset_test, get_class_from_file(args.model_path)(), eval(f"optim.{args.optimiser}"),
         eval(f"nn.{args.loss_func}()"), args.num_epochs, args.batch_size, args.logging_iters_train,
-        args.logging_iters_valid, args.model_title, args.save_graph, args.save_state, args.load_state
+        args.logging_iters_valid, args.model_title, args.save_graph, args.save_state, args.load_state,
+        args.period_save_weights
     )
