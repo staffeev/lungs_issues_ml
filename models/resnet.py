@@ -42,7 +42,7 @@ class ResNet(nn.Module):
         self.layer4 = self.create_layers(512, 3, stride=2)
         self.avgpool = nn.AvgPool2d(kernel_size=3, stride=2)
         self.dropout = nn.Dropout2d(p=0.5)
-        self.fc = nn.Linear(4608, 3)
+        self.fc = nn.Linear(4608, 2)
 
     def create_layers(self, out_channels, layers_count, stride=1):
         if stride != 1 or self.in_channels != out_channels:

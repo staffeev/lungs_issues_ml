@@ -30,7 +30,7 @@ class CNN(nn.Module):
             nn.ReLU()
         )
         self.seq5 = nn.Sequential(
-            nn.Linear(6272, 512),
+            nn.Linear(15488, 512),
             nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(512, 128),
@@ -39,7 +39,7 @@ class CNN(nn.Module):
             nn.Linear(128, 32),
             nn.ReLU(),
             nn.Dropout(0.5),
-            nn.Linear(32, 3),
+            nn.Linear(32, 2),
         )
     
     def forward(self, x):

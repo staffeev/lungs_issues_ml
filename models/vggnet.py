@@ -24,7 +24,7 @@ class VGGNet(nn.Module):
             nn.MaxPool2d(kernel_size=2)         # -> 32 x 32 x 256
         )
         self.classifier = nn.Sequential(
-            nn.Linear(256 * 16 * 16, 512),
+            nn.Linear(256 * 32 * 32, 512),
             nn.ReLU(inplace=True),
             nn.Dropout(),
             nn.Linear(512, 2),

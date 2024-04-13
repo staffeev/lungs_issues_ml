@@ -29,6 +29,7 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
     total_loss = 0
     total_acc = 0
     total_fscore = 0
+
     for x, y in tqdm(data, desc=log_desc):
         if len(y) != batch_size:
             continue
@@ -46,6 +47,7 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
         total_loss += cur_loss
         total_acc += cur_acc
         total_fscore += cur_fscore
+
     yield total_loss / len(data), total_acc / len(data), total_fscore / len(data)
 
 
@@ -68,11 +70,10 @@ def load_model_state(model_title, model, optimiser=None):
     return epoch
 
 
-def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
-                      num_epochs=3, batch_size=64, logging_iters_train=10,
-                      logging_iters_valid=3, model_title="Model", save_graph=True, 
-                      save_state=False, load_state=None, period_save_weights=1):
-    """Тест архитектуры: данные + модель + оптимизатор + функция потерь"""
+def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
+                num_epochs=3, batch_size=64, logging_iters_train=10,
+                logging_iters_valid=3, model_title="Model", save_graph=True, 
+                save_state=False, load_state=None, period_save_weights=1):
     model = model.to(device)
     data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True,
                                              generator=torch.Generator(device))
@@ -106,3 +107,23 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
     
     save_model_state(model, optimiser, f"{model_title}_{cur_epoch + num_epochs}", cur_epoch + num_epochs)
     print(f"Training time: {round(time.time() - start_time)} seconds")
+
+
+
+def test_architecture(healthy_dataset_train, healthy_dataset_test, healthy_model, healthy_optimiser, healthy_loss_func,
+                      coronavirus_dataset_train, coronavirus_dataset_test, coronavirus_model, coronavirus_optimiser, coronavirus_loss_func,
+                      num_epochs=3, batch_size=64, logging_iters_train=10,
+                      logging_iters_valid=3, model_title="Model", save_graph=True, 
+                      save_state=False, load_state=None, period_save_weights=1):
+
+    """Тест архитектуры: данные + модель + оптимизатор + функция потерь"""
+    train_model(healthy_dataset_train, healthy_dataset_test, healthy_model, 
+                healthy_optimiser, healthy_loss_func,
+                num_epochs, batch_size, logging_iters_train,
+                logging_iters_valid, model_title + "_healthy", save_graph, 
+                save_state, load_state, period_save_weights)
+    train_model(coronavirus_dataset_train, coronavirus_dataset_test, coronavirus_model, 
+                coronavirus_optimiser, coronavirus_loss_func,
+                num_epochs, batch_size, logging_iters_train,
+                logging_iters_valid, model_title + "_coronavirus", save_graph, 
+                save_state, load_state, period_save_weights)
