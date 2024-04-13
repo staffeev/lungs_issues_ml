@@ -92,7 +92,7 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
             data_test, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} valid", model, loss_func))
         TRAIN_FEATURES.append(train_epoch_metrics)
         VALID_FEATUES.append(test_epoch_metrics)
-        if save_state and i % period_save_weights:  # сохранение параметров модели
+        if save_state and i % period_save_weights == 0:  # сохранение параметров модели
             save_model_state(model, optimiser, f"{model_title}_{cur_epoch + i}", cur_epoch + i)
         # графики обучения
         if not save_graph:
