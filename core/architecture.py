@@ -93,7 +93,7 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
         TRAIN_FEATURES.append(train_epoch_metrics)
         VALID_FEATUES.append(test_epoch_metrics)
         if save_state and i % period_save_weights:  # сохранение параметров модели
-            save_model_state(model, optimiser, f"{model_title}_{i}", cur_epoch + i)
+            save_model_state(model, optimiser, f"{model_title}_{cur_epoch + i}", cur_epoch + i)
         # графики обучения
         if not save_graph:
             continue
@@ -103,5 +103,6 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
             plot_data(axs[2, x], [range(cur_epoch + i + 1)] * 2, [np.array(TRAIN_FEATURES)[:, x], np.array(VALID_FEATUES)[:, x]],
                     [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
         plt.savefig(os.path.join("graphs", f"{model_title}.png"))
-
+    
+    save_model_state(model, optimiser, f"{model_title}_{cur_epoch + 1 + num_epochs}", cur_epoch + 1 + num_epochs)
     print(f"Training time: {round(time.time() - start_time)} seconds")
