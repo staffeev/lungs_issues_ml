@@ -71,7 +71,7 @@ def load_model_state(model_title, model, optimiser=None):
 def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
                       num_epochs=3, batch_size=64, logging_iters_train=10,
                       logging_iters_valid=3, model_title="Model", save_graph=True, 
-                      save_state=False, load_state=None):
+                      save_state=False, load_state=None, period_save_weights=1):
     """Тест архитектуры: данные + модель + оптимизатор + функция потерь"""
     model = model.to(device)
     data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True,
@@ -84,7 +84,6 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
         cur_epoch = load_model_state(load_state, model, optimiser)
     start_time = time.time()
     TRAIN_FEATURES, VALID_FEATUES = [], []
-    _, axs = plt.subplots(3, 3, figsize=(15, 10))
     for i in range(num_epochs):
         *train_metrics, train_epoch_metrics = list(go_for_epoch(
             data_train, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} train", model, loss_func, optimiser))
@@ -92,15 +91,18 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
             data_test, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} valid", model, loss_func))
         TRAIN_FEATURES.append(train_epoch_metrics)
         VALID_FEATUES.append(test_epoch_metrics)
+        if save_state and i % period_save_weights == 0:  # сохранение параметров модели
+            save_model_state(model, optimiser, f"{model_title}_{cur_epoch + i}", cur_epoch + i)
         # графики обучения
+        if not save_graph:
+            continue
+        _, axs = plt.subplots(3, 3, figsize=(15, 10))
         plot_graphs_of_education(axs, model_title, train_metrics, test_metrics,
                                  logging_iters_train, logging_iters_valid)
-        if save_state:  # сохранение параметров модели
-            save_model_state(model, optimiser, model_title, cur_epoch + i)
-    TRAIN_FEATURES, VALID_FEATUES = np.array(TRAIN_FEATURES), np.array(VALID_FEATUES)
-    for x, label in enumerate(["loss", "accuracy", "fscore"]):
-        plot_data(axs[2, x], [range(num_epochs)] * 2, [TRAIN_FEATURES[:, x], VALID_FEATUES[:, x]],
-                [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
-    if save_graph:
+        for x, label in enumerate(["loss", "accuracy", "fscore"]):
+            plot_data(axs[2, x], [range(cur_epoch + i + 1)] * 2, [np.array(TRAIN_FEATURES)[:, x], np.array(VALID_FEATUES)[:, x]],
+                    [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
         plt.savefig(os.path.join("graphs", f"{model_title}.png"))
-    return round(time.time() - start_time)
+    
+    save_model_state(model, optimiser, f"{model_title}_{cur_epoch + num_epochs}", cur_epoch + num_epochs)
+    print(f"Training time: {round(time.time() - start_time)} seconds")

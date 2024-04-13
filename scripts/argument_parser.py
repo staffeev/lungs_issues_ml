@@ -40,11 +40,12 @@ class Parser:
         self.args.add_argument("--save_state", default=False, action=BooleanOptionalAction, help="Надо ли сохранять параметры модели")
         self.args.add_argument("--logging_iters_train", default=10, type=int, help="Метрики каждого i-го батча в train заносятся на график") 
         self.args.add_argument("--logging_iters_valid", default=3, type=int, help="Метрики каждого i-го батча в test заносятся на график") 
-        self.args.add_argument("--load_state", default=None, help="Название модели, чьи сохраненные параметры будут использованы в модели")
-    
+        self.args.add_argument("--load_state", default=None, help="Название файла с весами, чьи сохраненные параметры будут использованы в модели")
+        self.args.add_argument("--period_save_weights", default=1, type=int, help="Каждые n эпох веса модели будут сохраняться в файлы model_n.pt, model_2n.pt...")
+
     def add_get_answers_group(self):
         self.args.add_argument("model_path", help="Путь к файлу с моделью")
-        self.args.add_argument("--model_title", default="model", help="Название модели, которая будет использована для получения предсказаний для test")
+        self.args.add_argument("--weights", default="model_0", help="Название файла в папке model_states, весы из которого будет использован для получения предсказаний для test")
         self.args.add_argument("--save_path", default=os.path.join("outputs", "model.csv"), help="Путь, по которому будет сохранен файл с прадсказаниями")
 
 
