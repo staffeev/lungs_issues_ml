@@ -104,5 +104,5 @@ def test_architecture(dataset_train, dataset_test, model, optimiser, loss_func,
                     [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
         plt.savefig(os.path.join("graphs", f"{model_title}.png"))
     
-    save_model_state(model, optimiser, f"{model_title}_{cur_epoch + 1 + num_epochs}", cur_epoch + 1 + num_epochs)
+    save_model_state(model, optimiser, f"{model_title}_{cur_epoch + num_epochs}", cur_epoch + num_epochs)
     print(f"Training time: {round(time.time() - start_time)} seconds")
