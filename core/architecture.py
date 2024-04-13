@@ -71,9 +71,9 @@ def load_model_state(model_title, model, optimiser=None):
 
 
 def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
-                num_epochs=3, batch_size=64, logging_iters_train=10,
-                logging_iters_valid=3, model_title="Model", save_graph=True, 
-                save_state=False, load_state=None, period_save_weights=1):
+                num_epochs, batch_size, logging_iters_train,
+                logging_iters_valid, model_title, save_graph, 
+                save_state, load_state, period_save_weights):
     model = model.to(device)
     data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True,
                                              generator=torch.Generator(device))
