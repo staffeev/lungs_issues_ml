@@ -21,6 +21,16 @@ class Parser:
         self.args.add_argument("--download", action=BooleanOptionalAction, default=False, help="Булевый флаг, нужно ли скачивать датасет заново")
         self.args.add_argument("--train_size", type=float, default=0.9, help="Доля изображений, которая попадет в train выборку; остальные попадут в test")
 
+    def add_augmentation_group(self):
+        self.args.add_argument("--equalize", default=False, action=BooleanOptionalAction, help="Нужна ли нормализация изображений")
+        self.args.add_argument("--brightness", default=1, type=float, help="Параметр яркости")
+        self.args.add_argument("--contrast", default=1, type=float, help="Параметр контрастности")
+        self.args.add_argument("--sharpness", default=1, type=float, help="Параметр резкости")
+        self.args.add_argument("--horflip", default=0, type=float, help="Вероятность отражения")
+        self.args.add_argument("--rotate", default=0, type=int, help="Угол, на который максимально может быть повернуто изображеие")
+        self.args.add_argument("--resize", default=256, type=int, help="Размер изображения")
+        self.args.add_argument("--invert", default=False, action=BooleanOptionalAction, help="Нужно ли интерировать цвета")
+
     def add_training_group(self):
         self.args.add_argument("--model_title", type=str, default="model", help="Название модели")
         self.args.add_argument("model_path", type=str, help="Путь к файлу с моделью")

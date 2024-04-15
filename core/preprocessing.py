@@ -1,14 +1,14 @@
 from torchvision.transforms import transforms
 import torch
+from torchvision.transforms.v2 import functional as f
 
-torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-def get_train_transofrms():
+def get_train_transofrms(flip_prob=0, rot_angle=0):
     return transforms.Compose([
-        # transforms.RandomHorizontalFlip(),
-        # transforms.RandomRotation(35),
-        # transforms.RandomCrop(180, padding=4),
+        transforms.RandomHorizontalFlip(flip_prob),
+        transforms.RandomRotation(rot_angle),
         transforms.ToTensor(),
         transforms.Grayscale()
     ])
