@@ -2,7 +2,7 @@ from .argument_parser import Parser, get_class_from_file
 import sys
 sys.path.append("..")
 import os
-from core.preprocessing import get_train_transofrms, get_test_transforms, augmentation
+from core.preprocessing import get_train_transofrms, get_test_transforms
 from core.architecture import train_model
 from core.custom_dataset import CustomDataset
 from torch import nn
