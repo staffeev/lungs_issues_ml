@@ -62,7 +62,8 @@ def save_model_state(model, optimiser, model_title, epoch_num):
 
 def load_model_state(model_title, model, optimiser=None):
     """Загрузка состояния модели"""
-    checkpoint = torch.load(os.path.join("model_states", f"{model_title}.pt"))
+    checkpoint = torch.load(os.path.join("model_states", f"{model_title}.pt"),
+                            map_location=torch.device('cuda') if torch.cuda.is_available() else torch.device("cpu"))
     model.load_state_dict(checkpoint['model_state_dict'])
     if optimiser is not None:
         optimiser.load_state_dict(checkpoint['optimizer_state_dict'])

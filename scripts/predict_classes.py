@@ -9,7 +9,7 @@ from core.custom_dataset import CustomDataset
 import csv
 from tqdm import tqdm
 
-torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
+# torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
