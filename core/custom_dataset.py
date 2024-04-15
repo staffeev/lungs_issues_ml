@@ -36,7 +36,7 @@ class CustomDataset(Dataset):
             image = self.transform(image)
         image = self.augmentation(image)
         if self.img_labels is None:
-            return image, None
+            return image
         return image, self.img_labels.iloc[idx][1]
     
     def augmentation(self, x):

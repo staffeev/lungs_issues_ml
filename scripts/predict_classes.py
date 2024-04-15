@@ -18,7 +18,7 @@ def get_predicts(dataset, model):
     data = torch.utils.data.DataLoader(dataset, shuffle=False, generator=torch.Generator(device))
     predicts = []
     x = 0
-    for im, _ in tqdm(data, desc="Getting predictions"):
+    for im in tqdm(data, desc="Getting predictions"):
         im = im.to(device)
         y_pred = model(im).argmax(1).item()
         predicts.append((x, y_pred))
