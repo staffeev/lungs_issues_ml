@@ -1,6 +1,31 @@
 import torch.nn as nn
 
 
+class block(nn.Module):
+    def __init__(self, *args, downsample=None):
+        """
+        block.__init__(self, net, downsample)
+
+        Аргументы:
+        - net - та часть, сети, которая между skip-connection
+        - downsample - преобразования к X, чтобы он совпал.
+        """
+
+        super().__init__()
+
+        self.net = nn.Sequential(*args)
+        if downsample is None:
+            downsample = nn.Identity()
+
+        self.downsample = downsample
+
+    def forward(self, X):
+        identity = self.downsample(X)
+
+        # F(x) + x
+        return self.net(X) + identity
+
+
 class VGGNet(nn.Module):
     def __init__(self):
         super().__init__()
@@ -8,44 +33,56 @@ class VGGNet(nn.Module):
         self.features = nn.Sequential(
             # conv1
             nn.Conv2d(1, 64, kernel_size=3, padding=1),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            block(
+                nn.Conv2d(64, 64, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.Conv2d(64, 64, kernel_size=3, padding=1),
+                nn.ReLU(),
+            ),
             nn.MaxPool2d(2, stride=2, return_indices=True),
             
             # conv2
             nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
+            block(
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.ReLU(),
+            ),
             nn.MaxPool2d(2, stride=2, return_indices=True),
 
             # conv3
             nn.Conv2d(128, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
+            block(
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.ReLU(),
+            ),
             nn.MaxPool2d(2, stride=2, return_indices=True),
 
             # conv4
             nn.Conv2d(128, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
+            block(
+                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.ReLU(),
+            ),
             nn.MaxPool2d(2, stride=2, return_indices=True),
 
             # conv5
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            block(
+                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.ReLU(),
+                block(
+                    nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                    nn.ReLU(),
+                    nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                    nn.ReLU(),
+                )
+            ),
             nn.MaxPool2d(2, stride=2, return_indices=True)
         )
 
