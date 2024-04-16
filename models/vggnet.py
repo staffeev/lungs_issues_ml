@@ -60,7 +60,11 @@ class VGGNet(nn.Module):
         )
         
     def forward(self, x):
-        x = self.features(x)
+        for layer in self.features:
+            if isinstance(layer, nn.MaxPool2d):
+                x, location = layer(x)
+            else:
+                x = layer(x)
         x = x.view(x.size()[0], -1)
         x = self.classifier(x)
         return x
