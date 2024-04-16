@@ -5,7 +5,7 @@ import sys
 sys.path.append("..")
 from core.preprocessing import get_train_transofrms, get_test_transforms
 from core.architecture import test_binary_architecture
-from core.global_dataset import PatientCustomDataset
+from core.custom_dataset import CustomDataset
 from torch import nn
 from torch import optim
 import torch
@@ -21,24 +21,60 @@ if __name__ == "__main__":
     if args.use_gpu:
         torch.set_default_device("cuda")
     img_path = os.path.join("dataset", "data", "train_images")
-    healthy_dataset_train = PatientCustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
+    healthy_dataset_train = CustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
                                                  get_train_transofrms(), True)
-    healthy_dataset_test = PatientCustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), 
+    healthy_dataset_test = CustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), 
                                                 get_test_transforms(), True)
     healthy_model = get_class_from_file(args.model_path)()
 
-    coronavirus_dataset_train = PatientCustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
-                                                     get_train_transofrms(), False)
-    coronavirus_dataset_test = PatientCustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), 
-                                                    get_test_transforms(), False)
     coronavirus_model = get_class_from_file(args.model_path)()
     print(args.optimiser)
-    test_binary_architecture(
-        healthy_dataset_train, healthy_dataset_test, healthy_model, eval(f"optim.{args.optimiser}"), eval(f"nn.{args.loss_func}()"), 
-        coronavirus_dataset_train, coronavirus_dataset_test, coronavirus_model, eval(f"optim.{args.optimiser}"), eval(f"nn.{args.loss_func}()"), 
+    testy = nn.Sequential(
+            # conv1
+            nn.Conv2d(1, 64, kernel_size=3, padding=1),
+            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, stride=2, return_indices=True),
+            
+            # conv2
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(128, 128, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, stride=2, return_indices=True),
 
-        args.num_epochs, args.batch_size, args.logging_iters_train,
-        args.logging_iters_valid, args.model_title, args.save_graph, args.save_state, args.load_state,
-        args.period_save_weights
-    )
+            # conv3
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, stride=2, return_indices=True),
+
+            # conv4
+            nn.Conv2d(256, 512, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, stride=2, return_indices=True),
+
+            # conv5
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, stride=2, return_indices=True)
+        )
+    testy.eval()
+    
+    testy()
+
+
 
