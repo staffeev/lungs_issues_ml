@@ -50,13 +50,13 @@ class VGGNet(nn.Module):
         )
 
         self.classifier = nn.Sequential(
-            nn.Linear(32768, 1024),
+            nn.Linear(16384, 4096),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(1024, 512),
+            nn.Linear(4096, 4096),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(512, 3)
+            nn.Linear(4096, 3)
         )
         
     def forward(self, x):
