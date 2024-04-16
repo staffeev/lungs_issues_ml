@@ -32,54 +32,59 @@ class VGGNet(nn.Module):
     
         self.features = nn.Sequential(
             # conv1
-            nn.Conv2d(1, 64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(1),
+            nn.Conv2d(1, 32, kernel_size=3, padding=1),
             block(
-                nn.Conv2d(64, 64, kernel_size=3, padding=1),
+                nn.Conv2d(32, 32, kernel_size=3, padding=1),
                 nn.ReLU(),
-                nn.Conv2d(64, 64, kernel_size=3, padding=1),
+                nn.Conv2d(32, 32, kernel_size=3, padding=1),
                 nn.ReLU(),
             ),
             nn.MaxPool2d(2, stride=2, return_indices=True),
             
             # conv2
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
             nn.ReLU(),
             block(
-                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.Conv2d(64, 64, kernel_size=3, padding=1),
                 nn.ReLU(),
             ),
             nn.MaxPool2d(2, stride=2, return_indices=True),
 
             # conv3
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.Conv2d(64, 64, kernel_size=3, padding=1),
             nn.ReLU(),
             block(
-                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.Conv2d(64, 64, kernel_size=3, padding=1),
                 nn.ReLU(),
-                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.Conv2d(64, 64, kernel_size=3, padding=1),
                 nn.ReLU(),
             ),
             nn.MaxPool2d(2, stride=2, return_indices=True),
 
             # conv4
-            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
             nn.ReLU(),
             block(
-                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
                 nn.ReLU(),
-                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
                 nn.ReLU(),
             ),
             nn.MaxPool2d(2, stride=2, return_indices=True),
 
             # conv5
+            nn.BatchNorm2d(128),
             block(
-                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
                 nn.ReLU(),
                 block(
-                    nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                    nn.Conv2d(128, 256, kernel_size=3, padding=1),
                     nn.ReLU(),
-                    nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                    nn.Conv2d(256, 128, kernel_size=3, padding=1),
                     nn.ReLU(),
                 )
             ),
@@ -90,9 +95,11 @@ class VGGNet(nn.Module):
             nn.Linear(16384, 4096),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.ReLU(),
-            nn.Dropout(),
+            block(
+                nn.Linear(4096, 4096),
+                nn.ReLU(),
+                nn.Dropout(),
+            ),
             nn.Linear(4096, 3)
         )
         
