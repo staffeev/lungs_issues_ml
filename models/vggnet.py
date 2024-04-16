@@ -29,7 +29,10 @@ class VGGNet(nn.Module):
             nn.Linear(256 * 32 * 32, 512),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(512, 3),
+            nn.Linear(512, 32),
+            nn.ReLU(inplace=True),
+            nn.Dropout(),
+            nn.Linear(32, 3),
         )
         
     def forward(self, x):
@@ -38,4 +41,3 @@ class VGGNet(nn.Module):
         x = self.classifier(x)
         return x
 
-model = VGGNet()
