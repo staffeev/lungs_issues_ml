@@ -7,7 +7,8 @@ class VGGNet(nn.Module):
     
         self.features = nn.Sequential(
             # conv1
-            nn.Conv2d(3, 64, 3, padding=1),
+            nn.Conv2d(1, 64, 3, padding=1),
+            nn.Conv2d(1, 64, 3, padding=1),
             nn.ReLU(),
             nn.Conv2d(64, 64, 3, padding=1),
             nn.ReLU(),
@@ -55,7 +56,7 @@ class VGGNet(nn.Module):
             nn.Linear(4096, 4096),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(4096, 1000)
+            nn.Linear(4096, 3)
         )
         
     def forward(self, x):
