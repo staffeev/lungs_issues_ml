@@ -3,41 +3,63 @@ import torch.nn as nn
 
 class VGGNet(nn.Module):
     def __init__(self):
-        super(VGGNet, self).__init__()
+        super().__init__()
+    
         self.features = nn.Sequential(
-            nn.Conv2d(1, 64, kernel_size=3, padding=1),  # 256 x 256 x 1 -> 256 x 256 x 64
-            nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1), # -> 256 x 256 x 64
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2),       # -> 128 x 128 x 64
+            # conv1
+            nn.Conv2d(3, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2, return_indices=True),
+            
+            # conv2
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2, return_indices=True),
 
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),# -> 128 x 128 x 128
-            nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, kernel_size=3, padding=1),# -> 128 x 128 x 128
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2),          # -> 64 x 64 x 128
+            # conv3
+            nn.Conv2d(128, 256, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2, return_indices=True),
 
-            nn.Conv2d(128, 256, kernel_size=3, padding=1),# -> 64 x 64 x 256
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),# -> 64 x 64 x 256
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),# -> 64 x 64 x 256
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2)         # -> 32 x 32 x 256
+            # conv4
+            nn.Conv2d(256, 512, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2, return_indices=True),
+
+            # conv5
+            nn.Conv2d(512, 512, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2, return_indices=True)
         )
+
         self.classifier = nn.Sequential(
-            nn.Linear(256 * 32 * 32, 512),
-            nn.ReLU(inplace=True),
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(512, 32),
-            nn.ReLU(inplace=True),
+            nn.Linear(4096, 4096),
+            nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(32, 3),
+            nn.Linear(4096, 1000)
         )
         
     def forward(self, x):
         x = self.features(x)
-        x = x.view(x.size(0), -1)
+        x = x.view(x.size()[0], -1)
         x = self.classifier(x)
         return x
-
