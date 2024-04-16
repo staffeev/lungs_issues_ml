@@ -5,3 +5,4 @@ ml-intensive-yandex-academy-spring-2024
 .venv
 dataset
 dataset.zip
+model_states/vgg_aug_15.pt

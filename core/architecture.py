@@ -85,6 +85,7 @@ def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
     if load_state is not None:
         cur_epoch = load_model_state(load_state, model, optimiser)
     start_time = time.time()
+    _, axs = plt.subplots(3, 3, figsize=(15, 10))
     TRAIN_FEATURES, VALID_FEATUES = [], []
     for i in range(num_epochs):
         *train_metrics, train_epoch_metrics = list(go_for_epoch(
@@ -101,11 +102,11 @@ def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
         # графики обучения
         if not save_graph:
             continue
-        _, axs = plt.subplots(3, 3, figsize=(15, 10))
         plot_graphs_of_education(axs, model_title, train_metrics, test_metrics,
                                  logging_iters_train, logging_iters_valid)
         for x, label in enumerate(["loss", "accuracy", "fscore"]):
-            plot_data(axs[2, x], [range(cur_epoch + i + 1)] * 2, [np.array(TRAIN_FEATURES)[:, x], np.array(VALID_FEATUES)[:, x]],
+            axs[2, x].clear()
+            plot_data(axs[2, x], [range(cur_epoch, cur_epoch + i + 1)] * 2, [np.array(TRAIN_FEATURES)[:, x], np.array(VALID_FEATUES)[:, x]],
                     [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
         plt.savefig(os.path.join("graphs", f"{model_title}.png"))
     
