@@ -89,6 +89,9 @@ def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
     for i in range(num_epochs):
         *train_metrics, train_epoch_metrics = list(go_for_epoch(
             data_train, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} train", model, loss_func, optimiser))
+
+        torch.cuda.empty_cache() # ГПУщка не хватает
+
         *test_metrics, test_epoch_metrics = list(go_for_epoch(
             data_test, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} valid", model, loss_func))
         TRAIN_FEATURES.append(train_epoch_metrics)
