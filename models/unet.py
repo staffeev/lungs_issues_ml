@@ -6,20 +6,20 @@ class UNet(nn.Module):
     def __init__(self, bilinear=True):
         super(UNet, self).__init__()
 
-        self.incomming = (doubleConv(1, 64))
+        self.incomming = (doubleConv(1, 32))
 
-        self.down1 = (downsampler(64, 128))
-        self.down2 = (downsampler(128, 256))
-        self.down3 = (downsampler(256, 512))
-        factor = 2 
-        self.down4 = (downsampler(512, 1024 // factor))
+        self.down1 = (downsampler(32, 64))
+        self.down2 = (downsampler(64, 128))
+        self.down3 = (downsampler(128, 256))
+        factor = 2 if bilinear else 1
+        self.down4 = (downsampler(256, 512 // factor))
 
-        self.up1 = (upsampler(1024, 512 // factor, bilinear))
-        self.up2 = (upsampler(512, 256 // factor, bilinear))
-        self.up3 = (upsampler(256, 128 // factor, bilinear))
-        self.up4 = (upsampler(128, 64, bilinear))
+        self.up1 = (upsampler(512, 256 // factor, bilinear))
+        self.up2 = (upsampler(256, 128 // factor, bilinear))
+        self.up3 = (upsampler(128, 64 // factor, bilinear))
+        self.up4 = (upsampler(64, 32, bilinear))
 
-        self.outc = (outConv(64, 3))
+        self.outc = (outConv(32, 3))
 
     def forward(self, x):
         x1 = self.incomming(x)
