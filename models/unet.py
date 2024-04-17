@@ -38,8 +38,10 @@ class UNet(nn.Module):
         x = self.up2(x, x3)
         x = self.up3(x, x2)
         x = self.up4(x, x1)
-        logits = self.outc(x)
-        return logits
+        x = self.outc(x)
+        x = x.view(x.size()[0], -1)
+        x = self.classifier(x)
+        return x
 
     def use_checkpointing(self):
         self.incomming = torch.utils.checkpoint(self.incomming)
