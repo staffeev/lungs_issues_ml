@@ -3,7 +3,7 @@ from torch import nn
 
 
 class UNet(nn.Module):
-    def __init__(self, bilinear=False):
+    def __init__(self, bilinear=True):
         super(UNet, self).__init__()
 
         self.incomming = (doubleConv(1, 64))
