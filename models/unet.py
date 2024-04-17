@@ -6,20 +6,20 @@ class UNet(nn.Module):
     def __init__(self, bilinear=True):
         super(UNet, self).__init__()
 
-        self.incomming = (doubleConv(1, 32))
+        self.incomming = (doubleConv(1, 16))
 
-        self.down1 = (downsampler(32, 64))
-        self.down2 = (downsampler(64, 128))
-        self.down3 = (downsampler(128, 256))
+        self.down1 = (downsampler(16, 32))
+        self.down2 = (downsampler(32, 64))
+        self.down3 = (downsampler(64, 128))
         factor = 2 if bilinear else 1
-        self.down4 = (downsampler(256, 512 // factor))
+        self.down4 = (downsampler(128, 256 // factor))
 
-        self.up1 = (upsampler(512, 256 // factor, bilinear))
-        self.up2 = (upsampler(256, 128 // factor, bilinear))
-        self.up3 = (upsampler(128, 64 // factor, bilinear))
-        self.up4 = (upsampler(64, 32, bilinear))
+        self.up1 = (upsampler(256, 128 // factor, bilinear))
+        self.up2 = (upsampler(128, 64 // factor, bilinear))
+        self.up3 = (upsampler(64, 32 // factor, bilinear))
+        self.up4 = (upsampler(32, 16, bilinear))
 
-        self.outc = (outConv(32, 1))
+        self.outc = (outConv(16, 1))
 
         self.classifier = nn.Sequential(
             nn.Linear(65536, 4096),
