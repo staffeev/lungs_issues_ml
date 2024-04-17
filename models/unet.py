@@ -19,10 +19,10 @@ class UNet(nn.Module):
         self.up3 = (upsampler(128, 64 // factor, bilinear))
         self.up4 = (upsampler(64, 32, bilinear))
 
-        self.outc = (outConv(32, 32))
+        self.outc = (outConv(32, 1))
 
         self.classifier = nn.Sequential(
-            nn.Linear(8192, 4096),
+            nn.Linear(65536, 4096),
             nn.ReLU(),
             nn.Dropout(),
             nn.Linear(4096, 3)
