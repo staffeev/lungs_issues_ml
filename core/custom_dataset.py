@@ -12,8 +12,7 @@ torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class CustomDataset(Dataset):
     def __init__(self, img_dir, annotations_file=None, transform=None, resize=256, 
-                 brightness=1, contrast=1, sharpness=1, equalize=False, invert=False,
-                 mask=False):
+                 brightness=1, contrast=1, sharpness=1, equalize=False, invert=False):
         self.img_dir = img_dir
         self.transform = transform
         self.img_labels = pd.read_csv(annotations_file) if annotations_file is not None else None
@@ -23,7 +22,6 @@ class CustomDataset(Dataset):
         self.sharpness = sharpness
         self.equalize = equalize
         self.invert = invert
-        self.mask = mask
 
     def __len__(self):
         return len(self.img_labels) if self.img_labels is not None else len(os.listdir(self.img_dir))
@@ -34,10 +32,6 @@ class CustomDataset(Dataset):
         else:
             img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx][0])
         image = Image.open(img_path).convert("RGB")
-        if self.mask:
-            mask = Image.open(f"dataset/data/train_lung_masks/img_{idx}.png")
-            image = apply_mask(image, mask)
-
         if self.transform:
             image = self.transform(image)
         image = self.augmentation(image)
@@ -56,14 +50,3 @@ class CustomDataset(Dataset):
         x = f.adjust_sharpness(x, self.sharpness)
         return x
     
-
-def apply_mask(image, mask):
-    # Применение маски к изображению
-    masked_image = Image.new("RGB", image.size)
-    for x in range(image.width):
-        for y in range(image.height):
-            pixel = image.getpixel((x, y))
-            mask_pixel = mask.getpixel((x, y))
-            masked_pixel = tuple(int(pixel[i] * (mask_pixel / 255)) for i in range(3)) 
-            masked_image.putpixel((x, y), masked_pixel)
-    return masked_image
