@@ -8,3 +8,5 @@ if [[ -z "$flag" ]]; then
 else
     python scripts/creating_dataset.py --download
 fi
+mkdir dataset/data/train_images_masked
+python3 scripts/mask_images.py

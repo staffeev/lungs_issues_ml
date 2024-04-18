@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+from tqdm import tqdm
 
 
 if __name__== '__main__':
@@ -9,7 +10,7 @@ if __name__== '__main__':
 
     rows = []
     features = [f'target_features_{i}' for i in range(3)]
-    for _, row in table.iterrows():
+    for _, row in tqdm(table.iterrows(), desc="Merge predictions"):
         result_id = row.iloc[0]
         result_target = row[1:].idxmax()
         rows.append([result_id, result_target])

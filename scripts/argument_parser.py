@@ -30,6 +30,7 @@ class Parser:
         self.args.add_argument("--rotate", default=0, type=int, help="Угол, на который максимально может быть повернуто изображеие")
         self.args.add_argument("--resize", default=256, type=int, help="Размер изображения")
         self.args.add_argument("--invert", default=False, action=BooleanOptionalAction, help="Нужно ли интерировать цвета")
+        self.args.add_argument("--mask", default=False, action=BooleanOptionalAction, help="Нужно ли применять маски к train")
 
     def add_training_group(self):
         self.args.add_argument("--model_title", type=str, default="model", help="Название модели")
