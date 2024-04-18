@@ -24,7 +24,7 @@ if __name__ == "__main__":
     img_path = os.path.join("dataset", "data", "train_images_masked" if args.mask else "train_images")
     augmentation_args = (args.resize, args.brightness, args.contrast, args.sharpness, args.equalize, args.invert)
     if args.segmentation:
-        dataset = SegmentationDataset(get_test_transforms(args.horflip, args.rotate), 'dataset/data', 
+        dataset = SegmentationDataset(get_test_transforms(), 'dataset/data', 
                                       'train_images', 'train_lung_masks')
         fractions = [0.9, 0.1]
         dataset_train, dataset_train = random_split(dataset, fractions)
