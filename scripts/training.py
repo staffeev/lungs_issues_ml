@@ -27,7 +27,7 @@ if __name__ == "__main__":
         dataset = SegmentationDataset(get_test_transforms(), 'dataset/data', 
                                       'train_images', 'train_lung_masks')
         fractions = [0.9, 0.1]
-        dataset_train, dataset_train = random_split(dataset, fractions)
+        dataset_train, dataset_train = random_split(dataset, fractions, generator=torch.Generator(device='cuda'))
     else:
         dataset_train = CustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
                                   get_train_transofrms(args.horflip, args.rotate), *augmentation_args)
