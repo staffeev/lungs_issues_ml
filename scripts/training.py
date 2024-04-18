@@ -19,8 +19,8 @@ if __name__ == "__main__":
     args = parser.args.parse_args()
     if args.use_gpu:
         torch.set_default_device("cuda")
-    img_path = os.path.join("dataset", "data", "train_images")
-    augmentation_args = (args.resize, args.brightness, args.contrast, args.sharpness, args.equalize, args.invert, args.mask)
+    img_path = os.path.join("dataset", "data", "train_images_masked" if args.mask else "train_images")
+    augmentation_args = (args.resize, args.brightness, args.contrast, args.sharpness, args.equalize, args.invert)
     dataset_train = CustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
                                   get_train_transofrms(args.horflip, args.rotate), *augmentation_args)
     dataset_test = CustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), get_test_transforms(),
