@@ -33,6 +33,6 @@ class SegmentationDataset(Dataset):
             if self.transform:
                 mask = self.transform(mask)
 
-        if self.mask is None:
+        if mask is None:
             return image, f"img_{idx}.png"
         return image, mask
