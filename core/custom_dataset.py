@@ -12,7 +12,8 @@ torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class CustomDataset(Dataset):
     def __init__(self, img_dir, annotations_file=None, transform=None, resize=256, 
-                 brightness=1, contrast=1, sharpness=1, equalize=False, invert=False):
+                 brightness=1, contrast=1, sharpness=1, equalize=False, invert=False,
+                 segmentation=False):
         self.img_dir = img_dir
         self.transform = transform
         self.img_labels = pd.read_csv(annotations_file) if annotations_file is not None else None

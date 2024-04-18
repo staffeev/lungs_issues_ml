@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-
+# Модель для сегментации. Пожалуйста, заработай.
 class UNet(nn.Module):
     def __init__(self, bilinear=True):
         super(UNet, self).__init__()
@@ -17,16 +17,10 @@ class UNet(nn.Module):
         self.up1 = (upsampler(256, 128 // factor, bilinear))
         self.up2 = (upsampler(128, 64 // factor, bilinear))
         self.up3 = (upsampler(64, 32 // factor, bilinear))
-        self.up4 = (upsampler(32, 16, bilinear))
+        self.up4 = (upsampler(32, 32, bilinear))
 
-        self.outc = (outConv(16, 1))
+        self.outc = (outConv(32, 2))
 
-        self.classifier = nn.Sequential(
-            nn.Linear(65536 * 1, 4096),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Linear(4096, 3)
-        )
 
     def forward(self, x):
         x1 = self.incomming(x)

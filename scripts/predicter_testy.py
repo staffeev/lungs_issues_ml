@@ -5,7 +5,7 @@ import torch
 import os
 from core.architecture import load_model_state
 from core.preprocessing import get_test_transforms
-from core.global_dataset import PatientCustomDataset
+from core.segmentation_dataset import PatientCustomDataset
 import csv
 from tqdm import tqdm
 

@@ -53,6 +53,9 @@ class Parser:
         self.args.add_argument("--logging_iters_valid", default=3, type=int, help="Метрики каждого i-го батча в test заносятся на график") 
         self.args.add_argument("--load_state", default=None, help="Название файла с весами, чьи сохраненные параметры будут использованы в модели")
         self.args.add_argument("--period_save_weights", default=1, type=int, help="Каждые n эпох веса модели будут сохраняться в файлы model_n.pt, model_2n.pt...")
+        
+        self.args.add_argument("--segmentation", default=False, action=BooleanOptionalAction, help="Учим делить на маски?")
+        
 
     def add_get_answers_group(self):
         self.args.add_argument("model_path", help="Путь к файлу с моделью")

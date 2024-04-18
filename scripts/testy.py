@@ -1,4 +1,4 @@
-from core.global_dataset import PatientCustomDataset
+from core.segmentation_dataset import PatientCustomDataset
 import os
 from .argument_parser import Parser, get_class_from_file
 import sys
