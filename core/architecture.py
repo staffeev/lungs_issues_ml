@@ -41,12 +41,12 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
         if optimiser is not None:
             loss.backward()
             optimiser.step()
-        ix += 1
-        cur_loss, cur_acc, cur_fscore = loss.item(), *get_accuracy_fscore(y_pred.cpu(), y.cpu())
-        yield ix + len(data) * epoch_num, cur_loss, cur_acc, cur_fscore
+        ix += 1  # TODO исправить метрики и segmentation.
+        cur_loss = loss.item() # TODO cur_acc, cur_fscore = loss.item(), *get_accuracy_fscore(y_pred.cpu(), y.cpu())
+        yield ix + len(data) * epoch_num, cur_loss# cur_acc, cur_fscore
         total_loss += cur_loss
-        total_acc += cur_acc
-        total_fscore += cur_fscore
+        total_acc += 0 #cur_acc
+        total_fscore += 0 #cur_fscore
 
     yield total_loss / len(data), total_acc / len(data), total_fscore / len(data)
 
@@ -104,7 +104,7 @@ def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
             continue
         plot_graphs_of_education(axs, model_title, train_metrics, test_metrics,
                                  logging_iters_train, logging_iters_valid)
-        for x, label in enumerate(["loss", "accuracy", "fscore"]):
+        for x, label in enumerate(["loss",]):# TODO "accuracy", "fscore"]): 
             axs[2, x].clear()
             plot_data(axs[2, x], [range(cur_epoch, cur_epoch + i + 1)] * 2, [np.array(TRAIN_FEATURES)[:, x], np.array(VALID_FEATUES)[:, x]],
                     [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
