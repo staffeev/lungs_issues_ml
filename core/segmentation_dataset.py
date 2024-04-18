@@ -12,8 +12,8 @@ torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 class SegmentationDataset(Dataset):
     def __init__(self, transform, base_dir, images, masks):
         self.transform = transform
-        self.images_path = os.path.join(self.base_dir, images)
-        self.masks_path = os.path.join(self.base_dir, masks)
+        self.images_path = os.path.join(base_dir, images)
+        self.masks_path = os.path.join(base_dir, masks)
         self.len = len(os.listdir(self.images_path))
 
     def __len__(self):
