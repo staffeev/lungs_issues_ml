@@ -19,7 +19,7 @@ class UNet(nn.Module):
         self.up3 = (upsampler(64, 32 // factor, bilinear))
         self.up4 = (upsampler(32, 32, bilinear))
 
-        self.outc = (outConv(32, 2))
+        self.outc = (outConv(32, 1))
 
 
     def forward(self, x):
