@@ -9,4 +9,8 @@ else
     python scripts/creating_dataset.py --download
 fi
 mkdir dataset/data/train_images_masked
-python3 scripts/mask_images.py
+if [[ -z "$flag" ]]; then
+    python3 scripts/mask_images.py
+else
+    python3 scripts/mask_images.py
+fi
