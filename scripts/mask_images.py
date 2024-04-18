@@ -6,14 +6,8 @@ from tqdm import tqdm
 # Функция для применения маски к изображению
 def apply_mask(image, mask):
     # Применение маски к изображению
-    masked_image = Image.new("L", image.size)
-    for x in range(image.width):
-        for y in range(image.height):
-            pixel = image.getpixel((x, y))
-            mask_pixel = mask.getpixel((x, y))
-            masked_pixel = int(pixel * (mask_pixel / 255))
-            masked_image.putpixel((x, y), masked_pixel)
-    return masked_image
+    return Image.composite(image, mask, mask)
+    
 
 # Папки с изображениями и масками
 if __name__ == '__main__':
@@ -22,7 +16,7 @@ if __name__ == '__main__':
     output_folder = "dataset/data/train_images_masked"
 
     # Загрузка изображений и их масок
-    for filename in os.listdir(image_folder):
+    for filename in tqdm(os.listdir(image_folder)):
         if filename.endswith(".png"): 
             image_path = os.path.join(image_folder, filename)
             mask_path = os.path.join(mask_folder, filename)
