@@ -12,6 +12,29 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 
 # torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
+# метрика для сегментации.
+def intersection_over_union(predicted, target):
+    # Переводим предсказанные вероятности в бинарный формат (0 или 1)
+    predicted_binary = torch.round(predicted)
+    
+    # Вычисляем пересечение (intersection) и объединение (union) между предсказанными и истинными масками
+    intersection = torch.logical_and(predicted_binary, target).sum(dim=(1, 2, 3)).float()
+    union = torch.logical_or(predicted_binary, target).sum(dim=(1, 2, 3)).float()
+    
+    # Вычисляем значение IoU для каждого элемента в батче
+    iou = intersection / union
+    
+    return iou
+
+def mean_iou(predicted, target):
+    # Вычисляем IoU для каждого элемента в батче
+    iou = intersection_over_union(predicted, target)
+    
+    # Вычисляем среднее значение IoU для всего батча
+    mean_iou = iou.mean()
+    
+    return mean_iou
+
 
 def get_accuracy_fscore(output, labels):
     """Получение метрик модели: accuracy и fscore"""
@@ -19,7 +42,7 @@ def get_accuracy_fscore(output, labels):
     return accuracy_score(labels, pred), f1_score(labels, pred, average="macro")
 
 
-def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimiser=None):
+def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimiser=None, segmentation=False):
     """Обучение/тест модели в течение одной эпохи"""
     if optimiser is not None:
         model.train()
@@ -27,7 +50,7 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
         model.eval()
     ix = -1
     total_loss = 0
-    total_acc = 0
+    total_acc = 0  # В задачах сегментации это mIoU.
     total_fscore = 0
 
     for x, y in tqdm(data, desc=log_desc):
@@ -41,12 +64,16 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
         if optimiser is not None:
             loss.backward()
             optimiser.step()
-        ix += 1  # TODO исправить метрики и segmentation.
-        cur_loss = loss.item() # TODO cur_acc, cur_fscore = loss.item(), *get_accuracy_fscore(y_pred.cpu(), y.cpu())
-        yield ix + len(data) * epoch_num, cur_loss# cur_acc, cur_fscore
+        ix += 1
+        cur_loss = loss.item()
+        if segmentation:
+            cur_acc = mean_iou(y_pred.cpu(), y.cpu())
+        else:
+            cur_acc, cur_fscore = get_accuracy_fscore(y_pred.cpu(), y.cpu())
+        yield ix + len(data) * epoch_num, cur_loss, cur_acc, cur_fscore
         total_loss += cur_loss
-        total_acc += 0 #cur_acc
-        total_fscore += 0 #cur_fscore
+        total_acc += cur_acc
+        total_fscore += cur_fscore
 
     yield total_loss / len(data), total_acc / len(data), total_fscore / len(data)
 
@@ -74,7 +101,8 @@ def load_model_state(model_title, model, optimiser=None):
 def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
                 num_epochs, batch_size, logging_iters_train,
                 logging_iters_valid, model_title, save_graph, 
-                save_state, load_state, period_save_weights):
+                save_state, load_state, period_save_weights,
+                segmentation):
     model = model.to(device)
     data_train = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True,
                                              generator=torch.Generator(device))
@@ -89,12 +117,12 @@ def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
     TRAIN_FEATURES, VALID_FEATUES = [], []
     for i in range(num_epochs):
         *train_metrics, train_epoch_metrics = list(go_for_epoch(
-            data_train, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} train", model, loss_func, optimiser))
+            data_train, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} train", model, loss_func, optimiser, segmentation))
 
         torch.cuda.empty_cache() # ГПУщка не хватает
 
         *test_metrics, test_epoch_metrics = list(go_for_epoch(
-            data_test, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} valid", model, loss_func))
+            data_test, batch_size, cur_epoch + i, f"Epoch {cur_epoch + i} valid", model, loss_func, segmentation=segmentation))
         TRAIN_FEATURES.append(train_epoch_metrics)
         VALID_FEATUES.append(test_epoch_metrics)
         if save_state and i % period_save_weights == 0:  # сохранение параметров модели
@@ -104,7 +132,7 @@ def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
             continue
         plot_graphs_of_education(axs, model_title, train_metrics, test_metrics,
                                  logging_iters_train, logging_iters_valid)
-        for x, label in enumerate(["loss",]):# TODO "accuracy", "fscore"]): 
+        for x, label in enumerate(["loss", "accuracy", "fscore"]): 
             axs[2, x].clear()
             plot_data(axs[2, x], [range(cur_epoch, cur_epoch + i + 1)] * 2, [np.array(TRAIN_FEATURES)[:, x], np.array(VALID_FEATUES)[:, x]],
                     [f"Train {label}", f"Valid {label}"], title=f"{model_title} epoch {label}")
@@ -113,22 +141,3 @@ def train_model(dataset_train, dataset_test, model, optimiser, loss_func,
     save_model_state(model, optimiser, f"{model_title}_{cur_epoch + num_epochs}", cur_epoch + num_epochs)
     print(f"Training time: {round(time.time() - start_time)} seconds")
 
-
-
-def test_binary_architecture(healthy_dataset_train, healthy_dataset_test, healthy_model, healthy_optimiser, healthy_loss_func,
-                      coronavirus_dataset_train, coronavirus_dataset_test, coronavirus_model, coronavirus_optimiser, coronavirus_loss_func,
-                      num_epochs=3, batch_size=64, logging_iters_train=10,
-                      logging_iters_valid=3, model_title="Model", save_graph=True, 
-                      save_state=False, load_state=None, period_save_weights=1):
-
-    """Тест архитектуры: данные + модель + оптимизатор + функция потерь"""
-    train_model(healthy_dataset_train, healthy_dataset_test, healthy_model, 
-                healthy_optimiser, healthy_loss_func,
-                num_epochs, batch_size, logging_iters_train,
-                logging_iters_valid, model_title + "_healthy", save_graph, 
-                save_state, load_state, period_save_weights)
-    train_model(coronavirus_dataset_train, coronavirus_dataset_test, coronavirus_model, 
-                coronavirus_optimiser, coronavirus_loss_func,
-                num_epochs, batch_size, logging_iters_train,
-                logging_iters_valid, model_title + "_coronavirus", save_graph, 
-                save_state, load_state, period_save_weights)

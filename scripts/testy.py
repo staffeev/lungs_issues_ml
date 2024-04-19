@@ -4,7 +4,6 @@ from .argument_parser import Parser, get_class_from_file
 import sys
 sys.path.append("..")
 from core.preprocessing import get_train_transofrms, get_test_transforms
-from core.architecture import test_binary_architecture
 from core.custom_dataset import CustomDataset
 from torch import nn
 from torch import optim
