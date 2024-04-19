@@ -10,6 +10,7 @@ from torch import nn
 from torch import optim
 from torch.utils.data import random_split
 import torch
+from torchvision.models import vgg19
 
 torch.set_default_device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -33,8 +34,14 @@ if __name__ == "__main__":
                                   get_train_transofrms(args.grayscale, args.horflip, args.rotate), *augmentation_args)
         dataset_test = CustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), get_test_transforms(args.grayscale),
                                  *augmentation_args)
+    # train_model(
+    #     dataset_train, dataset_test, get_class_from_file(args.model_path)(), eval(f"optim.{args.optimiser}"),
+    #     eval(f"nn.{args.loss_func}()"), args.num_epochs, args.batch_size, args.logging_iters_train,
+    #     args.logging_iters_valid, args.model_title, args.save_graph, args.save_state, args.load_state,
+    #     args.period_save_weights, args.segmentation
+    # )
     train_model(
-        dataset_train, dataset_test, get_class_from_file(args.model_path)(), eval(f"optim.{args.optimiser}"),
+        dataset_train, dataset_test, vgg19(), eval(f"optim.{args.optimiser}"),
         eval(f"nn.{args.loss_func}()"), args.num_epochs, args.batch_size, args.logging_iters_train,
         args.logging_iters_valid, args.model_title, args.save_graph, args.save_state, args.load_state,
         args.period_save_weights, args.segmentation
