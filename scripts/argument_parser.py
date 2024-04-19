@@ -26,6 +26,7 @@ class Parser:
         self.args.add_argument("--brightness", default=1, type=float, help="Параметр яркости")
         self.args.add_argument("--contrast", default=1, type=float, help="Параметр контрастности")
         self.args.add_argument("--sharpness", default=1, type=float, help="Параметр резкости")
+        self.args.add_argument("--grayscale",  default=False, action=BooleanOptionalAction, help="Переводить ли изображение в черно-белое")
         self.args.add_argument("--horflip", default=0, type=float, help="Вероятность отражения")
         self.args.add_argument("--rotate", default=0, type=int, help="Угол, на который максимально может быть повернуто изображеие")
         self.args.add_argument("--resize", default=256, type=int, help="Размер изображения")

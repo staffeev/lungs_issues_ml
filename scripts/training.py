@@ -24,14 +24,14 @@ if __name__ == "__main__":
     img_path = os.path.join("dataset", "data", "train_images_masked" if args.mask else "train_images")
     augmentation_args = (args.resize, args.brightness, args.contrast, args.sharpness, args.equalize, args.invert)
     if args.segmentation:
-        dataset = SegmentationDataset(get_test_transforms(), 'dataset/data', 
+        dataset = SegmentationDataset(get_test_transforms(args.grayscale), 'dataset/data', 
                                       'train_images', 'train_lung_masks')
         fractions = [0.9, 0.1]
         dataset_train, dataset_test = random_split(dataset, fractions, generator=torch.Generator(device='cuda'))
     else:
         dataset_train = CustomDataset(img_path, os.path.join("dataset", "data", "train_labels.csv"), 
-                                  get_train_transofrms(args.horflip, args.rotate), *augmentation_args)
-        dataset_test = CustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), get_test_transforms(),
+                                  get_train_transofrms(args.grayscale, args.horflip, args.rotate), *augmentation_args)
+        dataset_test = CustomDataset(img_path, os.path.join("dataset", "data", "test_labels.csv"), get_test_transforms(args.grayscale),
                                  *augmentation_args)
     train_model(
         dataset_train, dataset_test, get_class_from_file(args.model_path)(), eval(f"optim.{args.optimiser}"),
