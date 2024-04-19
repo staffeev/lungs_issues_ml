@@ -11,7 +11,7 @@ def apply_mask(image, mask):
     
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-t", "--test", action='store_false', help="Используйте, чтобы делить test")
+parser.add_argument("-t", "--test", action='store_true', help="Используйте, чтобы делить test")
 args = parser.parse_args()
 # Папки с изображениями и масками
 if __name__ == '__main__':
