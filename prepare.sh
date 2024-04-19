@@ -8,7 +8,7 @@ if [[ -z "$flag" ]]; then
 else
     python scripts/creating_dataset.py --download
 fi
-mkdir dataset/data/train_images_masked
+mkdir dataset/data/train_images_masked dataset/data/test_lungs_mask dataset/data/test_images_masked
 if [[ -z "$flag" ]]; then
     python3 scripts/mask_images.py
 else

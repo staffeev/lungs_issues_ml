@@ -1,6 +1,7 @@
 from PIL import Image
 import os
 from tqdm import tqdm
+import argparse
 
 
 # Функция для применения маски к изображению
@@ -9,11 +10,15 @@ def apply_mask(image, mask):
     return Image.composite(image, mask, mask)
     
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--test", action='store_false', help="Используйте, чтобы делить test")
+args = parser.parse_args()
 # Папки с изображениями и масками
 if __name__ == '__main__':
-    image_folder = "dataset/data/train_images"
-    mask_folder = "dataset/data/train_lung_masks"
-    output_folder = "dataset/data/train_images_masked"
+    folder = 'test' if args.test else 'train'
+    image_folder = f"dataset/data/{folder}_images"
+    mask_folder = f"dataset/data/{folder}_lung_masks"
+    output_folder = f"dataset/data/{folder}_images_masked"
 
     # Загрузка изображений и их масок
     for filename in tqdm(os.listdir(image_folder)):
