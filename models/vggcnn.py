@@ -48,10 +48,14 @@ class VGGCNN(nn.Module):
             nn.ReLU(True),
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0),
         )
-        self.cnn_layers = nn.Sequential(
-            nn.Conv2d(512, 128, kernel_size=7),
+        self.a1 = nn.Sequential(
+            nn.Conv2d(512, 128, kernel_size=1),
             nn.ReLU(True),
-            nn.Conv2d(128, 128, kernel_size=7),
+        )
+        self.cnn_layers = nn.Sequential(
+            nn.Conv2d(512, 128, kernel_size=1),
+            nn.ReLU(True),
+            nn.Conv2d(128, 128, kernel_size=1),
             nn.ReLU(True),
             nn.BatchNorm2d(128),
             nn.MaxPool2d(2),
@@ -59,6 +63,9 @@ class VGGCNN(nn.Module):
         self.dense_layers = nn.Sequential(
             nn.Dropout(),
             nn.Flatten(),
+            nn.Linear(2048, 512),
+            nn.ReLU(True),
+            nn.Dropout(),
             nn.Linear(512, 128),
             nn.ReLU(True),
             nn.Dropout(),
@@ -67,9 +74,10 @@ class VGGCNN(nn.Module):
             nn.Dropout(),
             nn.Linear(32, 3)
         )
+        self.softmax = nn.LogSoftmax()
     
     def forward(self, x):
         x = self.vgg_layers(x)
         x = self.cnn_layers(x)
         x = self.dense_layers(x)
-        return nn.LogSoftmax(x)
+        return self.softmax(x)
