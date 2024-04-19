@@ -68,6 +68,7 @@ def go_for_epoch(data, batch_size, epoch_num, log_desc, model, loss_func, optimi
         cur_loss = loss.item()
         if segmentation:
             cur_acc = mean_iou(y_pred.cpu(), y.cpu())
+            cur_fscore = 0
         else:
             cur_acc, cur_fscore = get_accuracy_fscore(y_pred.cpu(), y.cpu())
         yield ix + len(data) * epoch_num, cur_loss, cur_acc, cur_fscore
