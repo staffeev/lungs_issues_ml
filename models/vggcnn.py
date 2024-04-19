@@ -3,10 +3,11 @@ from torch import nn
 
 class block(nn.Module):
     def __init__(self, *layers):
+        super().__init__()
         self.net = nn.Sequential(*layers)
         self.identity = nn.Identity()
     
-    def fordard(self, x):
+    def forward(self, x):
         return self.net(x) + self.identity(x)
 
 
