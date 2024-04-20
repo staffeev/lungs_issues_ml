@@ -15,11 +15,11 @@ class CNN(nn.Module):
     1) Четыре блока свёртки (Conv2d -> BathcNorm -> MaxPoll2d -> ReLU)
     2) Классификатор - полносвязная сеть из входного, трех скрытых, выходного слоёв.
        Структура слоя: (Linear -> ReLU -> Dropout). """
-    def __init__(self, in_channels=1):
+    def __init__(self, in_channels=3):
         """Метод инициализирует модель.
 
         Аргументы:
-        - in_channels: int = 1 - количество входных каналов изображения.
+        - in_channels: int = 3 - количество входных каналов изображения.
         """
         super().__init__()
 
