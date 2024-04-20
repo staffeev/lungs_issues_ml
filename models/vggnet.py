@@ -75,7 +75,7 @@ class VGGNet(nn.Module):
         )
 
         self.classifier = nn.Sequential(
-            nn.Linear(16384, 4096),
+            nn.Linear(32768, 4096),
             nn.ReLU(),
             nn.Dropout(),
             skipConnection(
