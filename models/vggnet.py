@@ -60,14 +60,14 @@ class VGGNet(nn.Module):
             # conv5
             nn.BatchNorm2d(512),
             skipConnection(
-                nn.Conv2d(512, 256, kernel_size=3, padding=1),
+                nn.Conv2d(512, 512, kernel_size=3, padding=1),
                 nn.ReLU(),
                 nn.Dropout(),
                 skipConnection(
-                    nn.Conv2d(256, 512, kernel_size=3, padding=1),
+                    nn.Conv2d(512, 512, kernel_size=3, padding=1),
                     nn.ReLU(),
                     nn.Dropout(),
-                    nn.Conv2d(512, 256, kernel_size=3, padding=1),
+                    nn.Conv2d(512, 512, kernel_size=3, padding=1),
                     nn.ReLU(),
                 )
             ),
