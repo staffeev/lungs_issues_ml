@@ -3,15 +3,12 @@
 
 Для расширямости и масштабируемости все виды метрик будут 
 объявлены или определены здесь вне зависимости от их происхождения.
-
 """
 from torch.nn import Module
 from torch.utils.data import DataLoader
 from torcheval.metrics import Metric
 from torcheval.metrics import MulticlassAccuracy, MulticlassPrecision
 from torcheval.metrics import MulticlassRecall, MulticlassF1Score
-
-__CLASSES_NUM = 3
 
 
 def accuracy_score(model: Module, dataloader: DataLoader) -> float:
@@ -21,7 +18,7 @@ def accuracy_score(model: Module, dataloader: DataLoader) -> float:
     - model: Module - модель, предсказания которой оцениваются.
     - dataloader: Dataloader - загрузчик данных, который загружает выборку."""
 
-    metric = MulticlassAccuracy(num_classes=__CLASSES_NUM)
+    metric = MulticlassAccuracy(num_classes=3)
     return count_metric(model, dataloader, metric)
 
 
@@ -32,7 +29,7 @@ def precision_score(model: Module, dataloader: DataLoader) -> float:
     - model: Module - модель, предсказания которой оцениваются.
     - dataloader: Dataloader - загрузчик данных, который загружает выборку."""
 
-    metric = MulticlassPrecision(num_classes=__CLASSES_NUM)
+    metric = MulticlassPrecision(num_classes=3)
     return count_metric(model, dataloader, metric)
 
 
@@ -43,7 +40,7 @@ def recall_score(model: Module, dataloader: DataLoader) -> float:
     - model: Module - модель, предсказания которой оцениваются.
     - dataloader: Dataloader - загрузчик данных, который загружает выборку."""
 
-    metric = MulticlassRecall(num_classes=__CLASSES_NUM)
+    metric = MulticlassRecall(num_classes=3)
     return count_metric(model, dataloader, metric)
 
 
@@ -54,7 +51,7 @@ def f1_score(model: Module, dataloader: DataLoader) -> float:
     - model: Module - модель, предсказания которой оцениваются.
     - dataloader: Dataloader - загрузчик данных, который загружает выборку."""
 
-    metric = MulticlassF1Score(num_classes=__CLASSES_NUM)
+    metric = MulticlassF1Score(num_classes=3)
     return count_metric(model, dataloader, metric)
 
 
