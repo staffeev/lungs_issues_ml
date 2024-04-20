@@ -1,9 +1,7 @@
-"""
-Модуль с доступными для подсчёта метриками.
+"""Модуль с доступными для подсчёта метриками.
 
 Для расширямости и масштабируемости все виды метрик будут 
-объявлены или определены здесь вне зависимости от их происхождения.
-"""
+объявлены или определены здесь вне зависимости от их происхождения."""
 from torch.nn import Module
 from torch.utils.data import DataLoader
 from torcheval.metrics import Metric
@@ -62,8 +60,7 @@ def count_metric(model: Module, dataloader: DataLoader, metric: Metric) -> float
     Аргументы:
     - model: Module - модель, предсказания которой оцениваются.
     - dataloader: Dataloader - загрузчик данных, который загружает выборку.
-    - metric: Metric - метрика, которая считается по полученным данным.
-    """
+    - metric: Metric - метрика, которая считается по полученным данным."""
     model.eval()
     for X, y in dataloader:
         X, y = X, y

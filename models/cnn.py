@@ -9,14 +9,12 @@ __all__ = [
 
 
 class CNN(nn.Module):
-    """
-    CNN (Convolutional Neural Network) - свёрточная нейронная сеть.
+    """CNN (Convolutional Neural Network) - свёрточная нейронная сеть.
     
     Архитектура сети:
     1) Четыре блока свёртки (Conv2d -> BathcNorm -> MaxPoll2d -> ReLU)
     2) Классификатор - полносвязная сеть из входного, трех скрытых, выходного слоёв.
-       Структура слоя: (Linear -> ReLU -> Dropout)
-    """
+       Структура слоя: (Linear -> ReLU -> Dropout). """
     def __init__(self, in_channels=1):
         """Метод инициализирует модель.
 
