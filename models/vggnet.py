@@ -1,13 +1,8 @@
 import torch.nn as nn
 
 
-__all__ = [
-    'VGGNet'    
-]
-
-
 class VGGNet(nn.Module):
-    def __init__(self, in_channels=1):
+    def __init__(self, in_channels=3):
         super().__init__()
 
         self.features = nn.Sequential(
@@ -15,7 +10,7 @@ class VGGNet(nn.Module):
             nn.Conv2d(in_channels, 64, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Dropout(),
-            SkipConnection(
+            skipConnection(
                 nn.Conv2d(64, 64, kernel_size=3, padding=1),
                 nn.ReLU(),
                 nn.Dropout(),
@@ -28,7 +23,7 @@ class VGGNet(nn.Module):
             nn.Conv2d(64, 128, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Dropout(),
-            SkipConnection(
+            skipConnection(
                 nn.Conv2d(128, 128, kernel_size=3, padding=1),
                 nn.ReLU(),
                 nn.Dropout(),
@@ -39,7 +34,7 @@ class VGGNet(nn.Module):
             nn.Conv2d(128, 256, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Dropout(),
-            SkipConnection(
+            skipConnection(
                 nn.Conv2d(256, 256, kernel_size=3, padding=1),
                 nn.ReLU(),
                 nn.Dropout(),
@@ -53,7 +48,7 @@ class VGGNet(nn.Module):
             nn.Conv2d(256, 512, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Dropout(),
-            SkipConnection(
+            skipConnection(
                 nn.Conv2d(512, 512, kernel_size=3, padding=1),
                 nn.ReLU(),
                 nn.Dropout(),
@@ -64,11 +59,11 @@ class VGGNet(nn.Module):
 
             # conv5
             nn.BatchNorm2d(512),
-            SkipConnection(
+            skipConnection(
                 nn.Conv2d(512, 256, kernel_size=3, padding=1),
                 nn.ReLU(),
                 nn.Dropout(),
-                SkipConnection(
+                skipConnection(
                     nn.Conv2d(256, 512, kernel_size=3, padding=1),
                     nn.ReLU(),
                     nn.Dropout(),
@@ -83,7 +78,7 @@ class VGGNet(nn.Module):
             nn.Linear(16384, 4096),
             nn.ReLU(),
             nn.Dropout(),
-            SkipConnection(
+            skipConnection(
                 nn.Linear(4096, 4096),
                 nn.ReLU(),
                 nn.Dropout(),
@@ -98,7 +93,7 @@ class VGGNet(nn.Module):
         return x
     
 
-class SkipConnection(nn.Module):
+class skipConnection(nn.Module):
     def __init__(self, *args, downsample=None):
         """
         block.__init__(self, net, downsample)
