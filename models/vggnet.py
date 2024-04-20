@@ -1,7 +1,104 @@
 import torch.nn as nn
 
 
-class block(nn.Module):
+__all__ = [
+    'VGGNet'    
+]
+
+
+class VGGNet(nn.Module):
+    def __init__(self, in_channels=1):
+        super().__init__()
+
+        self.features = nn.Sequential(
+            nn.BatchNorm2d(in_channels),
+            nn.Conv2d(in_channels, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            SkipConnection(
+                nn.Conv2d(64, 64, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.Dropout(),
+                nn.Conv2d(64, 64, kernel_size=3, padding=1),
+                nn.ReLU(),
+            ),
+            nn.MaxPool2d(2, stride=2),
+            
+            nn.BatchNorm2d(64),
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            SkipConnection(
+                nn.Conv2d(128, 128, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.Dropout(),
+            ),
+            nn.MaxPool2d(2, stride=2),
+
+            nn.BatchNorm2d(128),
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            SkipConnection(
+                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.Dropout(),
+                nn.Conv2d(256, 256, kernel_size=3, padding=1),
+                nn.ReLU(),
+            ),
+            nn.MaxPool2d(2, stride=2),
+
+            # conv4
+            nn.BatchNorm2d(256),
+            nn.Conv2d(256, 512, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            SkipConnection(
+                nn.Conv2d(512, 512, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.Dropout(),
+                nn.Conv2d(512, 512, kernel_size=3, padding=1),
+                nn.ReLU(),
+            ),
+            nn.MaxPool2d(2, stride=2),
+
+            # conv5
+            nn.BatchNorm2d(512),
+            SkipConnection(
+                nn.Conv2d(512, 256, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.Dropout(),
+                SkipConnection(
+                    nn.Conv2d(256, 512, kernel_size=3, padding=1),
+                    nn.ReLU(),
+                    nn.Dropout(),
+                    nn.Conv2d(512, 256, kernel_size=3, padding=1),
+                    nn.ReLU(),
+                )
+            ),
+            nn.MaxPool2d(2, stride=2)
+        )
+
+        self.classifier = nn.Sequential(
+            nn.Linear(16384, 4096),
+            nn.ReLU(),
+            nn.Dropout(),
+            SkipConnection(
+                nn.Linear(4096, 4096),
+                nn.ReLU(),
+                nn.Dropout(),
+            ),
+            nn.Linear(4096, 3)
+        )
+        
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size()[0], -1)
+        x = self.classifier(x)
+        return x
+    
+
+class SkipConnection(nn.Module):
     def __init__(self, *args, downsample=None):
         """
         block.__init__(self, net, downsample)
@@ -25,90 +122,3 @@ class block(nn.Module):
         # F(x) + x
         return self.net(X) + identity
 
-
-class VGGNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-    
-        self.features = nn.Sequential(
-            # conv1
-            nn.BatchNorm2d(1),
-            nn.Conv2d(1, 32, kernel_size=3, padding=1),
-            block(
-                nn.Conv2d(32, 32, kernel_size=3, padding=1),
-                nn.ReLU(),
-                nn.Conv2d(32, 32, kernel_size=3, padding=1),
-                nn.ReLU(),
-            ),
-            nn.MaxPool2d(2, stride=2, return_indices=True),
-            
-            # conv2
-            nn.BatchNorm2d(32),
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
-            nn.ReLU(),
-            block(
-                nn.Conv2d(64, 64, kernel_size=3, padding=1),
-                nn.ReLU(),
-            ),
-            nn.MaxPool2d(2, stride=2, return_indices=True),
-
-            # conv3
-            nn.BatchNorm2d(64),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.ReLU(),
-            block(
-                nn.Conv2d(64, 64, kernel_size=3, padding=1),
-                nn.ReLU(),
-                nn.Conv2d(64, 64, kernel_size=3, padding=1),
-                nn.ReLU(),
-            ),
-            nn.MaxPool2d(2, stride=2, return_indices=True),
-
-            # conv4
-            nn.BatchNorm2d(64),
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.ReLU(),
-            block(
-                nn.Conv2d(128, 128, kernel_size=3, padding=1),
-                nn.ReLU(),
-                nn.Conv2d(128, 128, kernel_size=3, padding=1),
-                nn.ReLU(),
-            ),
-            nn.MaxPool2d(2, stride=2, return_indices=True),
-
-            # conv5
-            nn.BatchNorm2d(128),
-            block(
-                nn.Conv2d(128, 128, kernel_size=3, padding=1),
-                nn.ReLU(),
-                block(
-                    nn.Conv2d(128, 256, kernel_size=3, padding=1),
-                    nn.ReLU(),
-                    nn.Conv2d(256, 128, kernel_size=3, padding=1),
-                    nn.ReLU(),
-                )
-            ),
-            nn.MaxPool2d(2, stride=2, return_indices=True)
-        )
-
-        self.classifier = nn.Sequential(
-            nn.Linear(8192, 4096),
-            nn.ReLU(),
-            nn.Dropout(),
-            block(
-                nn.Linear(4096, 4096),
-                nn.ReLU(),
-                nn.Dropout(),
-            ),
-            nn.Linear(4096, 3)
-        )
-        
-    def forward(self, x):
-        for layer in self.features:
-            if isinstance(layer, nn.MaxPool2d):
-                x, location = layer(x)
-            else:
-                x = layer(x)
-        x = x.view(x.size()[0], -1)
-        x = self.classifier(x)
-        return x
