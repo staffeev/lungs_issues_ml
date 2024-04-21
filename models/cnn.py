@@ -19,8 +19,7 @@ class CNN(nn.Module):
         """Метод инициализирует модель.
 
         Аргументы:
-        - in_channels: int = 3 - количество входных каналов изображения.
-        """
+        - in_channels: int = 3 - количество входных каналов изображения. """
         super().__init__()
 
         self.conv_layers = nn.Sequential(

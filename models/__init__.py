@@ -4,8 +4,8 @@
 from .cnn import *
 from .unet import *
 from .vgg16 import *
-
+from .resnet import *
 
 __all__ = [
-    'CNN', 'UNet', 'VGG16', 'VGG19'
+    'CNN', 'ResNet', 'UNet', 'VGG16', 'VGG19',
 ]
