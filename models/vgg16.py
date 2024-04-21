@@ -1,7 +1,7 @@
 import torch.nn as nn
 
 
-class VGGNet(nn.Module):
+class VGG16(nn.Module):
     def __init__(self, in_channels=3):
         super().__init__()
 
