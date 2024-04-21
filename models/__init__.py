@@ -3,9 +3,9 @@
 Для расширямости и масштабируемости все модели будут объявлены здесь. """
 from .cnn import *
 from .unet import *
-from .vggnet import *
+from .vgg16 import *
 
 
 __all__ = [
-    'CNN', 'UNet', 'VGGNet'
+    'CNN', 'UNet', 'VGG16', 'VGG19'
 ]

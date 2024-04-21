@@ -2,6 +2,11 @@
 from torch import nn
 
 
+__all__ = [
+    'SkipConnection'
+]
+
+
 class SkipConnection(nn.Module):
     '''SkipConnection - класс для создания SkipConnection.
     
@@ -11,9 +16,8 @@ class SkipConnection(nn.Module):
         """ Метод инициализирует блок.
 
         Аргументы:
-        - net - та часть, сети, которая между skip-connection
-        - sampling - преобразования для совпадения размерностей.
-        """
+        - *args - та часть, сети, которая между skip-connection
+        - sampling - преобразования для совпадения размерностей. """
 
         super().__init__()
 
@@ -21,10 +25,10 @@ class SkipConnection(nn.Module):
         if sampling is None:
             sampling = nn.Identity()
 
-        self.downsample = sampling
+        self.sampling = sampling
 
     def forward(self, X):
-        identity = self.downsample(X)
+        identity = self.sampling(X)
 
         # F(x) + x
         return self.net(X) + identity
