@@ -76,9 +76,9 @@ class VGG19(nn.Module):
         )
 
         self.classifier = nn.Sequential(
-            nn.Linear(32768, 8192),
-            nn.ReLU(),
-            nn.Dropout(),
+            # nn.Linear(32768, 8192),
+            # nn.ReLU(),
+            # nn.Dropout(),
             # skipConnection(
             #     nn.Linear(8192, 8192),
             #     nn.ReLU(),
