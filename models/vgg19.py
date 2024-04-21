@@ -80,19 +80,33 @@ class VGG19(nn.Module):
             nn.ReLU(),
             nn.Dropout(),
             skipConnection(
-                nn.Linear(8192, 1024),
+                nn.Linear(8192, 8192),
                 nn.ReLU(),
-                nn.Dropout(),
-                skipConnection(
-                    nn.Linear(1024, 256),
-                    nn.ReLU(),
-                    nn.Dropout(),
-                    skipConnection(
-                        nn.Linear(256, 32),
-                        nn.ReLU(),
-                        nn.Dropout()
-                    )
-                )
+                nn.Dropout()
+            ),
+            nn.Linear(8192, 1024),
+            nn.ReLU(),
+            nn.Dropout(),
+            skipConnection(
+                nn.Linear(1024, 1024),
+                nn.ReLU(),
+                nn.Dropout()
+            ),
+            nn.Linear(1024, 256),
+            nn.ReLU(),
+            nn.Dropout(),
+            skipConnection(
+                nn.Linear(256, 256),
+                nn.ReLU(),
+                nn.Dropout()
+            ),
+            nn.Linear(256, 32),
+            nn.ReLU(),
+            nn.Dropout(),
+            skipConnection(
+                nn.Linear(32, 32),
+                nn.ReLU(),
+                nn.Dropout()
             ),
             nn.Linear(32, 3)
         )
