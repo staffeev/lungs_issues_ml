@@ -2,10 +2,10 @@ from torch import nn
 
 
 class CNN(nn.Module):
-    def __init__(self):
+    def __init__(self, in_channels=3):
         super().__init__()
         self.seq1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=16, kernel_size=7, stride=1),
+            nn.Conv2d(in_channels, out_channels=16, kernel_size=7, stride=1),
             nn.BatchNorm2d(16),
             nn.MaxPool2d(2),
             nn.ReLU()

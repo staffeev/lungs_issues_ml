@@ -3,7 +3,7 @@ from torch import nn
 
 # Модель для сегментации. Пожалуйста, заработай.
 class UNet(nn.Module):
-    def __init__(self, bilinear=True):
+    def __init__(self, in_channel=3, out_channel=16, bilinear=True):
         super(UNet, self).__init__()
 
         self.incomming = (doubleConv(1, 16))
