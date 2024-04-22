@@ -3,10 +3,10 @@ from torch import nn
 
 # Модель для сегментации. Пожалуйста, заработай.
 class UNet(nn.Module):
-    def __init__(self, in_channel=3, out_channel=16, bilinear=True):
+    def __init__(self, in_channels=3, out_channels=16, bilinear=True):
         super(UNet, self).__init__()
 
-        self.incomming = (doubleConv(1, 16))
+        self.incomming = (doubleConv(in_channels, 16))
 
         self.down1 = (downsampler(16, 32))
         self.down2 = (downsampler(32, 64))
@@ -19,7 +19,7 @@ class UNet(nn.Module):
         self.up3 = (upsampler(64, 32 // factor, bilinear))
         self.up4 = (upsampler(32, 32, bilinear))
 
-        self.outc = (outConv(32, 1))
+        self.outc = (outConv(32, out_channels))
 
 
     def forward(self, x):
