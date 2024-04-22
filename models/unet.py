@@ -21,7 +21,6 @@ class UNet(nn.Module):
 
         self.outc = (outConv(32, out_channels))
 
-
     def forward(self, x):
         x1 = self.incomming(x)
         x2 = self.down1(x1)
