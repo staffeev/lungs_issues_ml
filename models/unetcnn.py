@@ -14,8 +14,8 @@ class UNetCNN(nn.Module):
     def __init__(self, in_channels: int=3):
         super().__init__()
 
-        self.unet = UNet(in_channels, 16)
-        self.cnn = CNN(16)
+        self.unet = UNet(in_channels, 32)
+        self.cnn = CNN(32)
 
 
     def forward(self, x):
