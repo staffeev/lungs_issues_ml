@@ -1,10 +1,6 @@
-from . import dataset
-from . import loss_functions
-from . import metrics
-from . import transforms
-from . import optimizers
+from .dataset import *
+from .loss_functions import *
+from .metrics import *
+from .transforms import *
+from .optimizers import *
 
-
-__all__ = [
-    'dataset', 'loss_functions', 'metrics', 'transforms', 'optimizers'
-]

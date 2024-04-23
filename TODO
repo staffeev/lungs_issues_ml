@@ -1,0 +1,5 @@
+# Просто задачи
+
+- [ ] Перенести код с torch.device.
+- [ ] Перенести MobileNet, а также может быть UNet+CNN.
+- [ ] predict_classes.
