@@ -2,68 +2,33 @@
 
 Для расширямости и масштабируемости все виды метрик будут 
 объявлены или определены здесь вне зависимости от их происхождения."""
-from torch.nn import Module
-from torch.utils.data import DataLoader
-from torcheval.metrics import Metric
-from torcheval.metrics import MulticlassAccuracy, MulticlassPrecision
-from torcheval.metrics import MulticlassRecall, MulticlassF1Score
+from torcheval.metrics import *
 
 
-def accuracy_score(model: Module, dataloader: DataLoader) -> float:
-    """Считает accuracy модели на выборке.
-    
-    Аргументы:
-    - model: Module - модель, предсказания которой оцениваются.
-    - dataloader: Dataloader - загрузчик данных, который загружает выборку."""
-
-    metric = MulticlassAccuracy(num_classes=3)
-    return count_metric(model, dataloader, metric)
+__all__ = [
+    'get_metrics'
+]
 
 
-def precision_score(model: Module, dataloader: DataLoader) -> float:
-    """Считает precision модели на выборке.
-    
-    Аргументы:
-    - model: Module - модель, предсказания которой оцениваются.
-    - dataloader: Dataloader - загрузчик данных, который загружает выборку."""
-
-    metric = MulticlassPrecision(num_classes=3)
-    return count_metric(model, dataloader, metric)
+def get_metrics(metrics_name: list[str]):
+    return list(eval(name)() for name in metrics_name)
 
 
-def recall_score(model: Module, dataloader: DataLoader) -> float:
-    """Считает recall модели на выборке.
-    
-    Аргументы:
-    - model: Module - модель, предсказания которой оцениваются.
-    - dataloader: Dataloader - загрузчик данных, который загружает выборку."""
-
-    metric = MulticlassRecall(num_classes=3)
-    return count_metric(model, dataloader, metric)
+def accuracy_score() -> Metric:
+    """Возвращаёт объект accuracy-метрики. """
+    return MulticlassAccuracy(num_classes=3)
 
 
-def f1_score(model: Module, dataloader: DataLoader) -> float:
-    """Считает f1_score модели на выборке.
-    
-    Аргументы:
-    - model: Module - модель, предсказания которой оцениваются.
-    - dataloader: Dataloader - загрузчик данных, который загружает выборку."""
-
-    metric = MulticlassF1Score(num_classes=3)
-    return count_metric(model, dataloader, metric)
+def precision_score() -> Metric:
+    """Возвращает объект precision-метрики. """
+    return MulticlassPrecision(num_classes=3)
 
 
-def count_metric(model: Module, dataloader: DataLoader, metric: Metric) -> float:
-    """Утилитная функция для уменьшения дублирования кода.
-    Считает метрику модели на данной выборке и возвращает результат.
-    
-    Аргументы:
-    - model: Module - модель, предсказания которой оцениваются.
-    - dataloader: Dataloader - загрузчик данных, который загружает выборку.
-    - metric: Metric - метрика, которая считается по полученным данным."""
-    model.eval()
-    for X, y in dataloader:
-        X, y = X, y
-        metric.update(model(X), y)
-    return metric.compute().item()
+def recall_score() -> Metric:
+    """Возвращает объект recall-метрики. """
+    return MulticlassRecall(num_classes=3)
 
+
+def f1_score() -> Metric:
+    """Возвращает объект f1-score-метрики. """
+    return MulticlassF1Score(num_classes=3)

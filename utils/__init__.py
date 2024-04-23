@@ -1,16 +1,8 @@
-import matplotlib.pyplot as plt
-import numpy as np
-
-import matplotlib as mpl
-from matplotlib.axes import Axes
+from .graphs import plot_graphs
+from .training import train_model
 
 
-def plot_graphs(axes: Axes, *args, **kwargs):
-    """Рисует графики данных по заданным осям. Вызывает plot.
-    
-    Аргументы:
-    - axes: Axes - оси, по которым строится график.
-    - *args - данные для построения графика.
-    - **kwargs - дополнительные аргументы. """
-    return axes.plot(*args, **kwargs)
-
+__all__ = [
+    'train_model',
+    'plot_graphs',
+]
