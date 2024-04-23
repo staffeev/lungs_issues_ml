@@ -1,8 +1,8 @@
-import dataset
-import loss_functions
-import metrics
-import transforms
-import optimizers
+from . import dataset
+from . import loss_functions
+from . import metrics
+from . import transforms
+from . import optimizers
 
 
 __all__ = [

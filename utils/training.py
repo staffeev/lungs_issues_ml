@@ -1,3 +1,4 @@
+"""Модуль с функциями для обучения модели."""
 import os
 from tqdm import tqdm
 from torch import save
@@ -6,6 +7,11 @@ from torch.utils.data import Dataset, DataLoader, random_split
 from torch.optim.optimizer import Optimizer
 from typing import Optional
 from torcheval.metrics import Metric
+
+
+__all__ = [
+    "train_model"
+]
 
 
 def run_epoch(model: Module, loss_function: Module, dataloader: DataLoader, 
@@ -50,6 +56,7 @@ def train_model(model: Module, loss_function: Module, optimizer: Optimizer,
                 num_epochs: int, batch_size: int, model_title: str,
                 metrics: list[Metric], save_path: str):
     """Обучает модель, то есть минимизирует лосс на конкретном датасете.
+    Возвращает историю train/valid loss-ов и metrics.
     
     Аргументы:
     - model: Module - обучаемая модель.
@@ -91,7 +98,6 @@ def train_model(model: Module, loss_function: Module, optimizer: Optimizer,
 
         save(model.state_dict(), os.path.join(save_path, f'{model_title}[{i}].pt'))
         save(optimizer.state_dict(), os.path.join(save_path, f'{model_title}_optim[{i}].pt'))
-    
 
+    return train_losses, train_metrics, valid_losses, valid_metric_values    
     
-

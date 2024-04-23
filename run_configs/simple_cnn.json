@@ -15,5 +15,11 @@
         "accuracy_score",
         "f1_score"
     ],
-    "save_path": "checkpoints"
+    "save_path": "checkpoints",
+    "graphs": {
+        "path": "graphs/",
+        "args": {
+            "параметр": "Значение"
+        }
+    }
 }

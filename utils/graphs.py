@@ -1,3 +1,4 @@
+"""Модуль с функциями для рисования графиков. """
 import matplotlib.pyplot as plt
 import numpy as np
 
