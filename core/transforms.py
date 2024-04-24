@@ -12,8 +12,10 @@ def get_transform(transforms_info: list = None) -> Transform:
 
     Аргументы:
     - transforms_info: list = None - список с описанием.
-      Должен состоять из словарей ('name': <имя класса>, 'args': <словарь аргументов>).
+      Должен состоять из словарей 
+      ('name': <имя класса>, 'args': <список аргументов>, 'kwargs': <словарь>).
       Если значение не передано, или список пустой возвращает тождественное преобразование. """
+    
     if not transform_info:
         return Identity()
     
@@ -21,6 +23,7 @@ def get_transform(transforms_info: list = None) -> Transform:
     for transform_info in transforms_info:
         name = transform_info['name']
         args = transform_info['args']
+        kwargs = transform_info['kwargs']
         transforms.append(create_transform(name, args))    
 
     return Compose(transforms)

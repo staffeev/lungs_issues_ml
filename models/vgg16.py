@@ -1,6 +1,6 @@
 """Реализация VGG-16"""
 import torch.nn as nn
-from .utils import SkipConnection
+from .utils import *
 
 __all__ = [
     'VGG16'    

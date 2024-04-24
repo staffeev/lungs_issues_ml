@@ -1,4 +1,31 @@
 {
+    "train": {
+        "dataset": {
+            "image_dir": "dataset/data/",
+            "labels_file": "dataset/data",
+            "transforms": [
+                {
+                    "name": "ToTensor",
+                    "args": [],
+                    "kwargs": {}
+                }
+            ]
+        }
+    },
+    "test": {
+        "dataset": {
+            "image_dir": "dataset/data/",
+            "labels_file": null,
+            "transforms": [
+                {
+                    "name": "ToTensor",
+                    "args": [],
+                    "kwargs": {}
+                }
+            ]
+        }
+    },
+
     "model": {
         "name": "CNN",
         "init": {

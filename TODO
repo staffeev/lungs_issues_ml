@@ -2,4 +2,6 @@
 
 - [ ] Перенести код с torch.device.
 - [ ] Перенести MobileNet, а также может быть UNet+CNN.
-- [ ] predict_classes.
+- [?] predict_classes. Переписать как-нибудь.
+- [ ] Скрипт для скачивания датасета.
+- [ ] Прикрепить get_transform

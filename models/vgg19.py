@@ -1,5 +1,5 @@
 import torch.nn as nn
-from .utils import SkipConnection
+from .utils import *
 
 
 __all__ = [

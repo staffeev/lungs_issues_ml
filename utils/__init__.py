@@ -1,9 +1,6 @@
 """Полезные утилитные функции"""
-from .graphs import plot_graphs
-from .training import train_model
+from .graphs import *
+from .run import *
+from .mask import *
+from .predict import *
 
-
-__all__ = [
-    'train_model',
-    'plot_graphs',
-]

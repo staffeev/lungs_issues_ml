@@ -7,10 +7,11 @@ from torch.utils.data import Dataset, DataLoader, random_split
 from torch.optim.optimizer import Optimizer
 from typing import Optional
 from torcheval.metrics import Metric
+from .predict import *
 
 
 __all__ = [
-    "train_model"
+    "run_model"
 ]
 
 
@@ -51,12 +52,21 @@ def run_epoch(model: Module, loss_function: Module, dataloader: DataLoader,
     return total_loss / len(dataloader), list(map(lambda metric: metric.compute().item(), metrics))
     
 
-def train_model(model: Module, loss_function: Module, optimizer: Optimizer, 
-                dataset: Dataset, train_valid_fractions: list[float],
-                num_epochs: int, batch_size: int, model_title: str,
-                metrics: list[Metric], save_path: str):
-    """Обучает модель, то есть минимизирует лосс на конкретном датасете.
+def run_model(model: Module, loss_function: Module, optimizer: Optimizer, 
+              dataset: Dataset, train_valid_fractions: list[float],
+              test_dataset: Dataset, predicts_path: str,
+              num_epochs: int, batch_size: int, 
+              model_title: str, save_path: str,
+              metrics: list[Metric]):
+    """Запускает модель. Обучает и получает предсказания для каждой эпохи.
     Возвращает историю train/valid loss-ов и metrics.
+    Запуск: 
+    1) Разделить dataset на train/valid.
+    2) Для каждой эпохи:
+       1) Обучить на train. 
+       2) Посмотреть результаты на valid.
+       3) Дать предсказания на test.
+    3) Вернуть историю обучения.
     
     Аргументы:
     - model: Module - обучаемая модель.
@@ -64,15 +74,19 @@ def train_model(model: Module, loss_function: Module, optimizer: Optimizer,
     - optimizer: Optimizer - оптимизатор модели.
     - dataset: Dataset - данные. Будут разделены на train и valid.
     - train_valid_fractions: list[float] - в каком отношении делить выборку.
+    - test_dataset: Dataset - тестовая выборка, на которую и делаются предсказания.
     - num_epochs: int - количество эпох, которые будет обучаться модели.
+    - predicts_path: str - путь к папке, где нужно сохранять предсказания.
     - batch_size: int - размер пачки (батча).
     - model_title: str - под каким именем сохранять файлы состояния.
-    - metrics: list[Metric] - список метрик для подсчета.
-    - save_path: bool - путь, где нужно сохранять состояния модели. """
+    - save_path: str - путь, где нужно сохранять состояния модели.
+    - metrics: list[Metric] - список метрик для подсчета. """
 
     train_dataset, valid_dataset = random_split(dataset, train_valid_fractions)
+
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True), 
-    valid_dataloader = DataLoader(valid_dataset, batch_size=batch_size)
+    valid_dataloader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
+    test_dataloader = DataLoader(test_dataset, shuffle=False)  # TODO: Иван, стоит ли менять bathc-size?
 
     train_losses, train_metrics = [], []
     valid_losses, valid_metrics = [], []
@@ -95,6 +109,8 @@ def train_model(model: Module, loss_function: Module, optimizer: Optimizer,
         
         valid_losses.append(valid_loss)
         valid_metrics.append(valid_metric_values)
+
+        get_and_save_predicts(model, test_dataloader, os.path.join(save_path, f"{model_title}[{i}].csv"))
 
         save(model.state_dict(), os.path.join(save_path, f'{model_title}[{i}].pt'))
         save(optimizer.state_dict(), os.path.join(save_path, f'{model_title}_optim[{i}].pt'))
