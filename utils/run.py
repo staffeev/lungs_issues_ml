@@ -53,7 +53,7 @@ def run_epoch(model: Module, loss_function: Module, dataloader: DataLoader,
     
 
 def run_model(model: Module, loss_function: Module, optimizer: Optimizer, 
-              dataset: Dataset, train_valid_fractions: list[float],
+              train_dataset: Dataset, valid_dataset: Dataset, 
               test_dataset: Dataset, predicts_path: str,
               num_epochs: int, batch_size: int, 
               model_title: str, save_path: str,
@@ -82,11 +82,9 @@ def run_model(model: Module, loss_function: Module, optimizer: Optimizer,
     - save_path: str - путь, где нужно сохранять состояния модели.
     - metrics: list[Metric] - список метрик для подсчета. """
 
-    train_dataset, valid_dataset = random_split(dataset, train_valid_fractions)
-
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True), 
     valid_dataloader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
-    test_dataloader = DataLoader(test_dataset, shuffle=False)  # TODO: Иван, стоит ли менять bathc-size?
+    test_dataloader = DataLoader(test_dataset, shuffle=False)  # TODO: Иван, стоит ли менять batch-size?
 
     train_losses, train_metrics = [], []
     valid_losses, valid_metrics = [], []

@@ -1,29 +1,28 @@
 {
-    "train": {
-        "dataset": {
+    "train_valid_dataset": {
+        "init": {
             "image_dir": "dataset/data/",
-            "labels_file": "dataset/data",
-            "transforms": [
-                {
-                    "name": "ToTensor",
-                    "args": [],
-                    "kwargs": {}
-                }
-            ]
-        }
+            "labels_file": "dataset/data/"
+        },
+        "train_valid_fractions": [0.9, 0.1],
+        "transform": [
+            {
+                "name": "ToTensor",
+                "args": [],
+                "kwargs": {}
+            }
+        ]
     },
-    "test": {
-        "dataset": {
-            "image_dir": "dataset/data/",
-            "labels_file": null,
-            "transforms": [
-                {
-                    "name": "ToTensor",
-                    "args": [],
-                    "kwargs": {}
-                }
-            ]
-        }
+    "test_dataset": {
+        "image_dir": "dataset/data/",
+        "labels_file": null,
+        "transform": [
+            {
+                "name": "ToTensor",
+                "args": [],
+                "kwargs": {}
+            }
+        ]
     },
 
     "model": {
@@ -40,7 +39,6 @@
             "lr": 1e-3
         }
     },
-    "train_valid_fractions": [0.9, 0.1],
     "num_epochs": 15,
     "batch_size": 64,
     "metrics": [
