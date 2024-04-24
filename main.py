@@ -4,6 +4,7 @@ from models import *
 from torch.nn import Module
 from torch.optim.optimizer import Optimizer
 
+
 def read_config(config_file: str) -> dict:
     with open(config_file, 'r') as f:
         return json.load(f)
