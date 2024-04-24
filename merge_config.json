@@ -1,0 +1,7 @@
+{
+    "output": "merge.csv",
+    "files": [
+        "a.csv",
+        "b.csv"
+    ]
+}
